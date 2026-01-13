@@ -15,7 +15,6 @@
 > Saytda yerləşdirilən bütün məlumatlar:
 > - Məlumatlandırma məqsədi daşıyır
 > - Texniki dəstək və yönləndirmə üçündür
-> - Heç bir proqram, alət, bypass və ya texniki müdaxilə təqdim etmir
 >
 > Məlumatlar zamanla dəyişə bilər.
 > Ən aktual və dəqiq məlumatlar **Discord serverimizdə** paylaşılır:
