@@ -1,6 +1,4 @@
-# FivemAze
->
-[!IMPORTANT]
+> [!IMPORTANT]
 > Bu link **FivemAze serveri üçün hazırlanmış rəsmi məlumat və FAQ saytıdır.**
 > 
 > Saytın məqsədi:
@@ -8,19 +6,9 @@
 > - FiveM və oyun içi problemlərin həllini göstərmək  
 > - VIP / Donate məlumatlarını **toplu və səliqəli şəkildə** təqdim etmək  
 > 
-> 🔗 Sayt linki: **https://aze-faq.vercel.app
+> 🔗 Sayt linki: https://fivemaze-faq.vercel.app/
 > 
->Diqqət
->[!CAUTION]
-> Bu sayt **yalnız FivemAze serveri üçün hazırlanmış məlumat və FAQ səhifəsidir**.
->
-> Saytda yer alan bütün məlumatlar:
-> - Oyunçuları məlumatlandırmaq məqsədi daşıyır  
-> - Texniki dəstək və yönləndirmə üçündür  
-> - Heç bir proqram, alət və ya texniki müdaxilə təqdim etmir
->
-> ⚠️ Buradakı məlumatlar zamanla dəyişə bilər.  
-> Ən aktual və dəqiq məlumatlar **Discord serverimizdə** paylaşılır.
->discord.gg/fivemaze
-
-
+> [!CAUTION]
+> Bu sayt **heç bir proqram, alət və ya bypass tətbiqi deyil**.  
+> Yalnız **məlumatlandırma məqsədi** daşıyır.  
+> Ən aktual və dəqiq məlumatlar **Discord serverində** paylaşılır.
