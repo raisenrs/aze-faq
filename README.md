@@ -17,6 +17,6 @@
 > - Texniki dəstək və yönləndirmə üçündür
 > - Heç bir proqram, alət, bypass və ya texniki müdaxilə təqdim etmir
 >
-> ⚠️ Məlumatlar zamanla dəyişə bilər.
+> Məlumatlar zamanla dəyişə bilər.
 > Ən aktual və dəqiq məlumatlar **Discord serverimizdə** paylaşılır:
 > **discord.gg/fivemaze**
