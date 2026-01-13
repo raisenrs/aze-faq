@@ -8,7 +8,7 @@
 > - FiveM və oyun içi problemlərin həllini göstərmək  
 > - VIP / Donate məlumatlarını **toplu və səliqəli şəkildə** təqdim etmək  
 > 
-> 🔗 Sayt linki: https://fivemaze-faq.vercel.app/
+> 🔗 Sayt linki https://aze-faq.vercel.app
 > 
 >[!CAUTION]
 > Bu sayt **yalnız FivemAze serveri üçün hazırlanmış məlumat və FAQ səhifəsidir**.
