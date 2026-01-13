@@ -8,7 +8,7 @@
 > 
 > 🔗 Sayt linki https://aze-faq.vercel.app
 > 
->[!CAUTION]
+> [!CAUTION]
 > Bu sayt **yalnız FivemAze serveri üçün hazırlanmış məlumat və FAQ səhifəsidir**.
 >
 > Saytda yer alan bütün məlumatlar:
