@@ -1,5 +1,3 @@
-> #FivemAze Freeroam
->
 > [!IMPORTANT]
 > Bu link **FivemAze serveri üçün hazırlanmış rəsmi məlumat və FAQ saytıdır.**
 > 
