@@ -1,3 +1,5 @@
+#FivemAze Freeroam
+
 > [!IMPORTANT]
 > Bu link **FivemAze serveri üçün hazırlanmış rəsmi məlumat və FAQ saytıdır.**
 > 
@@ -8,7 +10,14 @@
 > 
 > 🔗 Sayt linki: https://fivemaze-faq.vercel.app/
 > 
-> [!CAUTION]
-> Bu sayt **heç bir proqram, alət və ya bypass tətbiqi deyil**.  
-> Yalnız **məlumatlandırma məqsədi** daşıyır.  
-> Ən aktual və dəqiq məlumatlar **Discord serverində** paylaşılır.
+>[!CAUTION]
+> Bu sayt **yalnız FivemAze serveri üçün hazırlanmış məlumat və FAQ səhifəsidir**.
+>
+> Saytda yer alan bütün məlumatlar:
+> - Oyunçuları məlumatlandırmaq məqsədi daşıyır  
+> - Texniki dəstək və yönləndirmə üçündür  
+> - Heç bir proqram, alət və ya texniki müdaxilə təqdim etmir
+>
+> ⚠️ Buradakı məlumatlar zamanla dəyişə bilər.  
+> Ən aktual və dəqiq məlumatlar **Discord serverimizdə** paylaşılır.
+> discord.gg/fivemaze
