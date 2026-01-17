@@ -1,2666 +1,2532 @@
 <!DOCTYPE html>
 <html lang="az">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FivemAze Freeroam</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <style>
-      :root {
-        --bg-primary: #0f0f13;
-        --bg-secondary: #1a1a1f;
-        --bg-card: #1e1e24;
-        --text-primary: #e0e0e0;
-        --text-secondary: #8a8a8a;
-        --border-color: #2a2a2f;
-        --accent-color: #d32f2f;
-        --accent-secondary: #2c5282;
-        --sidebar-bg: #16161a;
-      }
-
-      .light-mode {
-        --bg-primary: #f8f9fa;
-        --bg-secondary: #ffffff;
-        --bg-card: #ffffff;
-        --text-primary: #2d3748;
-        --text-secondary: #718096;
-        --border-color: #e2e8f0;
-        --accent-color: #c53030;
-        --accent-secondary: #2b6cb0;
-        --sidebar-bg: #f1f5f9;
-      }
-
-      * {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        font-family: 'Inter', sans-serif;
-        background: var(--bg-primary);
-        color: var(--text-primary);
-        min-height: 100vh;
-        margin: 0;
-        transition: all 0.3s ease;
-      }
-
-      body.welcome-active {
-        overflow: hidden;
-      }
-
-      .glass-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-      }
-
-      .sidebar {
-        background: var(--sidebar-bg);
-        border-right: 1px solid var(--border-color);
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 280px;
-        overflow-y: auto;
-        z-index: 50;
-      }
-
-      .main-content {
-        margin-left: 280px;
-        padding: 20px;
-        min-height: 100vh;
-      }
-
-      @media (max-width: 1024px) {
-        .sidebar {
-          transform: translateX(-100%);
-          transition: transform 0.3s ease;
-        }
-
-        .sidebar.active {
-          transform: translateX(0);
-        }
-
-        .main-content {
-          margin-left: 0;
-        }
-
-        .sidebar-overlay {
-          display: none;
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.5);
-          z-index: 40;
-        }
-
-        .sidebar-overlay.active {
-          display: block;
-        }
-      }
-
-      .faq-item {
-        margin-bottom: 12px;
-        border-radius: 8px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        background: var(--bg-card);
-      }
-
-      .faq-question {
-        padding: 16px;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: all 0.3s ease;
-        border-bottom: 1px solid var(--border-color);
-      }
-
-      .faq-question:hover {
-        background: rgba(255, 255, 255, 0.03);
-      }
-
-      .faq-answer {
-        padding: 0;
-        max-height: 0;
-        overflow: hidden;
-        opacity: 0;
-        transition: all 0.3s ease;
-      }
-
-      .faq-item.active .faq-answer {
-        padding: 16px;
-        max-height: 5000px;
-        opacity: 1;
-      }
-
-      .faq-toggle {
-        transition: transform 0.3s ease;
-      }
-
-      .faq-item.active .faq-toggle {
-        transform: rotate(180deg);
-      }
-
-      .category-header {
-        margin: 24px 0 12px;
-        padding-bottom: 8px;
-        border-bottom: 2px solid var(--border-color);
-        font-size: 1.25rem;
-        font-weight: 600;
-      }
-
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      ::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.1);
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: rgba(100, 100, 100, 0.5);
-        border-radius: 3px;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: rgba(100, 100, 100, 0.7);
-      }
-
-      /* Question numbers */
-      .question-number {
-        width: 28px;
-        height: 28px;
-        background: #bc3b3b;
-        color: #fff;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: 600;
-        flex-shrink: 0;
-      }
-
-      .light-mode .question-number {
-        background: #4a5568;
-        color: #fff;
-      }
-
-      /* Code blocks */
-      .code-block {
-        background: rgba(0, 0, 0, 0.2);
-        border-left: 3px solid var(--accent-color);
-        padding: 12px;
-        border-radius: 6px;
-        font-family: 'Courier New', monospace;
-        font-size: 14px;
-        margin: 12px 0;
-        overflow-x: auto;
-      }
-
-      .light-mode .code-block {
-        background: rgba(0, 0, 0, 0.05);
-      }
-
-      /* Light mode adjustments */
-      .light-mode .faq-question:hover {
-        background: rgba(0, 0, 0, 0.02);
-      }
-
-      /* Mobile menu button */
-      .mobile-menu-btn {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 100;
-        background: var(--accent-color);
-        color: white;
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-      }
-
-      @media (max-width: 1024px) {
-        .mobile-menu-btn {
-          display: flex;
-        }
-      }
-
-      /* Active sidebar item */
-      .sidebar-item {
-        display: flex;
-        align-items: center;
-        padding: 12px 16px;
-        border-radius: 8px;
-        margin: 4px 12px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        color: var(--text-primary);
-      }
-
-      .sidebar-item:hover {
-        background: rgba(255, 255, 255, 0.05);
-      }
-
-      .sidebar-item.active {
-        background: rgba(211, 47, 47, 0.1);
-        color: var(--accent-color);
-        border-left: 3px solid var(--accent-color);
-      }
-
-      .light-mode .sidebar-item:hover {
-        background: rgba(0, 0, 0, 0.05);
-      }
-
-      .light-mode .sidebar-item.active {
-        background: rgba(197, 48, 48, 0.1);
-      }
-
-      /* Content sections */
-      .content-section {
-        display: none;
-        animation: fadeIn 0.3s ease;
-      }
-
-      .content-section.active {
-        display: block;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* No results message */
-      .no-results {
-        text-align: center;
-        padding: 40px 20px;
-        color: var(--text-secondary);
-      }
-
-      /* Support message */
-      .support-message {
-        background: rgba(211, 47, 47, 0.1);
-        border: 1px solid rgba(211, 47, 47, 0.2);
-        border-radius: 8px;
-        padding: 16px;
-        margin-top: 20px;
-      }
-
-      /* Logo container */
-      .logo-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-        width: 50px;
-        height: 50px;
-        font-weight: bold;
-        color: white;
-      }
-      
-      .logo-img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-      }
-
-      /* ===== FINAL BANNER FIX ===== */
-      .banner-container {
-        position: relative;
-        height: 175px;
-        overflow: hidden;
-        border-radius: 12px;
-        margin-bottom: 48px;
-      }
-
-      .banner-gif {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .banner-overlay {
-        position: relative;
-        z-index: 2;
-        height: 100%;
-        width: 100%;
-        padding: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: linear-gradient(to right,
-            rgba(15, 15, 19, 0.9),
-            rgba(15, 15, 19, 0.55),
-            rgba(15, 15, 19, 0.9));
-      }
-
-      .banner-content {
-        max-width: 70%;
-      }
-
-      /* ===== MOBILE FIX ===== */
-      @media (max-width: 768px) {
-        .banner-container {
-          height: 200px;
-          margin-bottom: 32px;
-        }
-
-        .banner-content h1 {
-          font-size: 1.5rem;
-        }
-      }
-      
-      .server-status {
-        background: rgba(16, 185, 129, 0.15);
-        border: 1px solid rgba(16, 185, 129, 0.35);
-        color: #a7f3d0;
-        border-radius: 10px;
-        padding: 10px 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-        margin-bottom: 16px;
-      }
-
-      .server-status i {
-        color: #22c55e;
-      }
-
-      /* Welcome overlay için ek CSS */
-      #welcomeOverlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 9999;
-        transition: opacity 0.5s ease;
-        background: linear-gradient(135deg, #0f0f13 0%, #1a1a2e 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      #welcomeOverlay.opacity-0 {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      #welcomeOverlay:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('./raisen.gif') center/cover no-repeat;
-        filter: blur(8px) brightness(0.4);
-        z-index: 1;
-      }
-
-      .welcome-content {
-        position: relative;
-        z-index: 2;
-        text-align: center;
-        padding: 20px;
-      }
-      
-      /* Səs idarəetmə üçün */
-      .volume-controls {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 100;
-        opacity: 0.8;
-        transition: opacity 0.3s ease;
-      }
-      
-      .volume-controls:hover {
-        opacity: 1;
-      }
-      
-      .volume-panel {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 15px;
-        border-radius: 10px;
-      }
-      
-      #volumeSlider {
-        width: 100px;
-        height: 5px;
-        -webkit-appearance: none;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 3px;
-        outline: none;
-      }
-      
-      #volumeSlider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 15px;
-        height: 15px;
-        border-radius: 50%;
-        background: #d32f2f;
-        cursor: pointer;
-      }
-      
-      .volume-tooltip {
-        position: absolute;
-        top: -25px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        white-space: nowrap;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-      
-      /* Yeni Chat komandaları stili - Fotoğraftaki gibi */
-      .chat-commands-category {
-        background: rgba(30, 30, 36, 0.8);
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 24px;
-        border-left: 4px solid #d32f2f;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-
-      .chat-commands-category h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 16px;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .chat-commands-category h3 i {
-        color: #d32f2f;
-      }
-
-      .chat-command-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 12px;
-      }
-
-      .chat-command-item {
-        background: rgba(40, 40, 48, 0.7);
-        border-radius: 8px;
-        padding: 14px;
-        display: flex;
-        flex-direction: column;
-        transition: all 0.2s ease;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-      }
-
-      .chat-command-item:hover {
-        background: rgba(50, 50, 60, 0.8);
-        transform: translateY(-2px);
-      }
-
-      .command-code {
-        font-family: 'Courier New', monospace;
-        background: rgba(211, 47, 47, 0.15);
-        color: #ff6b6b;
-        padding: 6px 10px;
-        border-radius: 6px;
-        margin-bottom: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        border: 1px solid rgba(211, 47, 47, 0.3);
-      }
-
-      .command-desc {
-        color: #b0b0c0;
-        font-size: 13px;
-        line-height: 1.4;
-      }
-
-      /* Sidebar'daki açılır bölüm için */
-      .sidebar-collapsible {
-        margin-top: 16px;
-      }
-
-      .sidebar-collapsible-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 16px;
-        cursor: pointer;
-        border-radius: 8px;
-        margin: 0 12px;
-        transition: all 0.3s ease;
-      }
-
-      .sidebar-collapsible-header:hover {
-        background: rgba(255, 255, 255, 0.05);
-      }
-
-      .sidebar-collapsible-header i {
-        transition: transform 0.3s ease;
-        color: #8a8a8a;
-      }
-
-      .sidebar-collapsible-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
-        margin: 0 12px;
-      }
-
-      .sidebar-collapsible.active .sidebar-collapsible-content {
-        max-height: 400px;
-        overflow-y: auto;
-      }
-
-      .sidebar-collapsible.active .sidebar-collapsible-header i {
-        transform: rotate(180deg);
-      }
-
-      /* Video container */
-      .video-container {
-        width: 100%;
-        max-width: 800px;
-        margin: 20px auto;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      }
-
-      .video-container video {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
-
-      /* Yeni Qısayollar grid stili */
-      .shortcuts-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 15px;
-        margin-top: 20px;
-      }
-
-      .shortcut-category {
-        background: rgba(40, 40, 48, 0.7);
-        border-radius: 10px;
-        padding: 20px;
-        border-left: 4px solid #d32f2f;
-      }
-
-      .shortcut-category h3 {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 15px;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .shortcut-category h3 i {
-        color: #d32f2f;
-      }
-
-      .shortcut-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      }
-
-      .shortcut-item:last-child {
-        border-bottom: none;
-      }
-
-      .shortcut-keys {
-        display: flex;
-        gap: 5px;
-      }
-
-      .key {
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-        padding: 4px 8px;
-        font-family: 'Courier New', monospace;
-        font-size: 12px;
-        min-width: 30px;
-        text-align: center;
-      }
-
-      .key.combo {
-        background: rgba(211, 47, 47, 0.2);
-        border-color: rgba(211, 47, 47, 0.4);
-      }
-
-      /* Copy button */
-      .copy-btn {
-        background: rgba(16, 185, 129, 0.15);
-        border: 1px solid rgba(16, 185, 129, 0.35);
-        color: #a7f3d0;
-        border-radius: 8px;
-        padding: 10px 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 20px;
-        margin-bottom: 20px;
-      }
-      
-      .copy-btn:hover {
-        background: rgba(16, 185, 129, 0.25);
-        transform: translateY(-2px);
-      }
-      
-      .copy-btn i {
-        color: #22c55e;
-      }
-      
-      .copy-btn.copied {
-        background: rgba(59, 130, 246, 0.15);
-        border-color: rgba(59, 130, 246, 0.35);
-        color: #93c5fd;
-      }
-      
-      .copy-btn.copied i {
-        color: #3b82f6;
-      }
-      
-      /* Fallback message - KISALTILMIŞ */
-      .fallback-message {
-        background: rgba(245, 158, 11, 0.1);
-        border: 1px solid rgba(245, 158, 11, 0.35);
-        border-radius: 8px;
-        padding: 12px 16px;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        font-size: 14px;
-      }
-      
-      .fallback-message i {
-        color: #f59e0b;
-        margin-right: 8px;
-      }
-      
-      /* Similar questions */
-      .similar-questions {
-        background: rgba(59, 130, 246, 0.1);
-        border: 1px solid rgba(59, 130, 246, 0.35);
-        border-radius: 8px;
-        padding: 16px;
-        margin-top: 15px;
-        margin-bottom: 15px;
-      }
-      
-      .similar-questions i {
-        color: #3b82f6;
-        margin-right: 10px;
-      }
-      
-      .similar-questions-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 12px;
-      }
-      
-      .similar-question-tag {
-        background: rgba(59, 130, 246, 0.2);
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        border-radius: 6px;
-        padding: 6px 12px;
-        font-size: 13px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-      
-      .similar-question-tag:hover {
-        background: rgba(59, 130, 246, 0.3);
-        transform: translateY(-2px);
-      }
-      
-      /* Music selection overlay */
-      .music-selection-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 9998;
-        background: #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.5s ease;
-      }
-      
-      .music-selection-overlay.active {
-        opacity: 1;
-        pointer-events: all;
-      }
-      
-      .music-selection-container {
-        background: #121212;
-        border-radius: 12px;
-        padding: 20px;
-        max-width: 500px;
-        width: 95%;
-        max-height: 90vh;
-        overflow-y: auto;
-        border: 1px solid #282828;
-      }
-      
-      .music-selection-title {
-        text-align: center;
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #282828;
-      }
-      
-      .music-selection-title h2 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: white;
-        margin-bottom: 5px;
-      }
-      
-      .music-selection-title p {
-        color: #b3b3b3;
-        font-size: 0.9rem;
-      }
-      
-      .music-tracks-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-      
-      .music-track-card {
-        background: #181818;
-        border-radius: 8px;
-        padding: 12px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      
-      .music-track-card:hover {
-        background: #282828;
-      }
-      
-      .music-track-card.active {
-        background: rgba(211, 47, 47, 0.1);
-        border-color: #d32f2f;
-      }
-      
-      .track-cover {
-        width: 50px;
-        height: 50px;
-        border-radius: 6px;
-        overflow: hidden;
-        flex-shrink: 0;
-      }
-      
-      .track-cover img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      
-      .track-cover-placeholder {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #d32f2f, #ff6b6b);
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        color: white;
-        font-size: 20px;
-      }
-      
-      .track-info {
-        flex: 1;
-      }
-      
-      .track-info h3 {
-        font-size: 0.95rem;
-        font-weight: 600;
-        margin-bottom: 4px;
-        color: white;
-      }
-      
-      .track-info p {
-        color: #b3b3b3;
-        font-size: 0.8rem;
-      }
-      
-      .track-icon {
-        color: #1db954;
-        font-size: 1.2rem;
-      }
-      
-      .select-music-btn {
-        display: block;
-        margin: 0 auto;
-        padding: 12px 30px;
-        background: #181818;
-        color: white;
-        border: none;
-        border-radius: 50px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      
-      .select-music-btn:hover {
-        background: #b71c1c;
-        transform: scale(1.05);
-      }
-      
-      /* Responsive music selection */
-      @media (max-width: 768px) {
-        .music-selection-container {
-          padding: 15px;
-          width: 95%;
-        }
-        
-        .music-selection-title h2 {
-          font-size: 1.3rem;
-        }
-      }
-    </style>
-  </head>
-  <body class="relative welcome-active">
-    <!-- MUSIC SELECTION OVERLAY -->
-    <div id="musicSelectionOverlay" class="music-selection-overlay">
-      <div class="music-selection-container">
-        <div class="music-selection-title">
-          <h2>FivemAze</h2>
-          <p>Sayta daxil olmamışdan əvvəl, istədiyiniz fon musiqisini seçin</p>
-        </div>
-        
-        <div class="music-tracks-grid">
-          <!-- Track 1 -->
-          <div class="music-track-card active" data-track="0">
-            <div class="track-cover">
-              <img src="./main.png" alt="The world we knew">
-            </div>
-            <div class="track-info">
-              <h3>The world we knew</h3>          
-            </div>
-            <div class="track-icon">
-              <i class="fas fa-check-circle"></i>
-            </div>
-          </div>
-          
-          <!-- Track 2 -->
-          <div class="music-track-card" data-track="1">
-            <div class="track-cover">
-              <img src="./main1.png" alt="yung kai - blue">
-            </div>
-            <div class="track-info">
-              <h3>yung kai - blue</h3>             
-            </div>
-          </div>
-          
-          <!-- Track 3 -->
-          <div class="music-track-card" data-track="2">
-            <div class="track-cover">
-              <img src="./main2.png" alt="ati242 - maraton">
-            </div>
-            <div class="track-info">
-              <h3>ati242 - maraton</h3>            
-            </div>
-          </div>
-          
-          <!-- Track 4 -->
-          <div class="music-track-card" data-track="3">
-            <div class="track-cover">
-              <img src="./main3.png" alt="my marmalade">
-            </div>
-            <div class="track-info">
-              <h3>my marmalade by Katia Lel</h3>             
-            </div>
-          </div>
-          
-          <!-- Track 5 -->
-          <div class="music-track-card" data-track="4">
-            <div class="track-cover">
-              <img src="./main4.png" alt="Qara Gözlüm">
-            </div>
-            <div class="track-info">
-              <h3>Nur Cəfərli x Ruzigar Qədirov — Qara Gözlüm</h3>          
-            </div>
-          </div>
-        </div>
-        
-        <button id="selectMusicBtn" class="select-music-btn">
-          <i class="fas fa-check-circle"></i>
-          Xoş Gəlmisiniz
-        </button>
-      </div>
-    </div>
-
-    <!-- WELCOME OVERLAY -->
-    <div id="welcomeOverlay" class="flex items-center justify-center">
-      <div class="welcome-content">
-        <img src="./giris.png" class="w-32 mx-auto mb-6" />
-
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-          FivemAze
-        </h1>
-
-        <p class="text-gray-300 mb-8 max-w-xl mx-auto">
-          Serverimizlə bağlı bütün məlumatları və sual-cavabları bu səhifədə tapa bilərsiniz.
-        </p>
-
-        <button
-          id="enterSiteBtn"
-          class="px-12 py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white text-lg font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
-        >
-          Daxil ol
-        </button>
-      </div>
-    </div>
-
-    <!-- Mobile Menu Button -->
-    <div class="mobile-menu-btn" id="mobileMenuBtn">
-      <i class="fas fa-bars"></i>
-    </div>
-    
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <!-- Logo -->
-      <div class="p-6 border-b border-gray-800">
-        <div class="flex items-center space-x-3">
-          <div class="logo-container">
-            <img src="./fivem.png" alt="FivemAze Logo" class="logo-img">
-          </div>
-          <div>
-            <h1 class="text-2xl font-bold gradient-text animate-gradient">ㅤFivemAze</h1>
-            <div class="w-50 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent mx-auto mt-2"></div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Search -->
-      <div class="p-4 border-b border-gray-800">
-        <div class="relative">
-          <input type="text" placeholder="Sual axtar..." class="w-full bg-gray-900 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-red-500" id="searchInput">
-          <i class="fas fa-search absolute left-3 top-2.5 text-gray-500"></i>
-        </div>
-      </div>
-      
-      <!-- Categories -->
-      <div class="p-4">
-        <div class="space-y-2">
-          <a href="#" class="sidebar-item active" data-section="all">
-            <i class="fas fa-list mr-3"></i>
-            <span>Bütün Suallar</span>
-          </a>
-          <a href="#" class="sidebar-item" data-section="technical">
-            <i class="fas fa-tools mr-3"></i>
-            <span>Texniki Suallar</span>
-            <span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">3</span>
-          </a>
-          <a href="#" class="sidebar-item" data-section="game">
-            <i class="fas fa-gamepad mr-3"></i>
-            <span>Oyun İçi Suallar</span>
-            <span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">8</span>
-          </a>
-          <a href="#" class="sidebar-item" data-section="special">
-            <i class="fas fa-car mr-3"></i>
-            <span>Özel Maşınlar</span>
-            <span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">2</span>
-          </a>
-          <a href="#" class="sidebar-item" data-section="problems">
-            <i class="fas fa-question-circle mr-3"></i>
-            <span>Problem Həll</span>
-            <span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">3</span>
-          </a>
-          <a href="#" class="sidebar-item" data-section="controls">
-            <i class="fas fa-keyboard mr-3"></i>
-            <span>Qısayollar</span>
-            <span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">4</span>
-          </a>
-        </div>
-      </div>
-      
-      <!-- All Questions List (Açılır-kapanır) -->
-      <div class="sidebar-collapsible" id="allQuestionsCollapsible">
-        <div class="sidebar-collapsible-header">
-          <h3 class="font-medium text-gray-400">Bütün Suallar</h3>
-          <i class="fas fa-chevron-down text-xs"></i>
-        </div>
-        <div class="sidebar-collapsible-content">
-          <div class="space-y-1 py-2" id="questionsList">
-            <!-- Questions will be populated by JavaScript -->
-          </div>
-        </div>
-      </div>
-      
-      <!-- Footer -->
-      <div class="p-4 border-t border-gray-800 mt-auto text-center">
-        <p class="text-sm text-gray-400"> Made by <span class="font-semibold text-white">Raisen</span>
-        </p>
-        <div class="flex justify-center space-x-5 my-3">
-          <a href="https://discord.gg/fivemaze" target="_blank" class="text-gray-400 hover:text-indigo-400 transition">
-            <i class="fab fa-discord text-lg"></i>
-          </a>
-          <a href="https://github.com/raisenrs" target="_blank" class="text-gray-400 hover:text-white transition">
-            <i class="fab fa-github text-lg"></i>
-          </a>
-        </div>
-        <p class="text-center text-xs text-gray-500 mt-3">© 2026 FivemAze.</p>
-        <p class="text-center text-xs text-gray-500 mt-3">Bütün hüquqlar qorunur.</p>
-      </div>
-    </div>
-    
-    <!-- Main Content -->
-    <div class="main-content">
-      <div class="server-status glass-card">
-        <i class="fas fa-circle"></i>
-        <span><strong>Server Status:</strong> Hazırda normal vəziyyətdə işləyir</span>
-      </div>
-
-      <!-- Banner Section -->
-      <div class="banner-container glass-card mb-8">
-        <img src="./raisen.gif" alt="FivemAze Banner" class="banner-gif">
-        <div class="banner-overlay">
-          <div class="banner-content">
-            <h1 class="text-3xl font-bold">Suallar və Cavabları</h1>
-            <p class="text-gray-300 mt-2"> Serverimizlə bağlı ən çox soruşulan suallar və cavabları </p>
-          </div>
-          <div class="theme-toggle cursor-pointer p-2 rounded-lg bg-gray-900 bg-opacity-60 hover:bg-gray-700 transition-colors" id="themeToggle">
-            <i class="fas fa-moon text-yellow-300"></i>
-          </div>
-        </div>
-      </div>
-      
-      <!-- All Questions Content -->
-      <div class="content-section active" id="all-section">
-        <div id="all-questions-container">
-          <!-- Questions will be loaded here by JavaScript -->
-        </div>
-        
-        <!-- Support Message -->
-        <div class="support-message mt-12">
-          <div class="flex items-start space-x-3">
-            <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center flex-shrink-0">
-              <i class="fas fa-question-circle text-white"></i>
-            </div>
-            <div>
-              <h3 class="font-bold mb-2">Cavabını tapa bilmədiyiniz sualınız var?</h3>
-              <p class="text-sm text-gray-300">Discord serverimizdə heyət üzvlərindən kömək ala bilərsiniz:</p>
-              <a href="https://discord.gg/fivemaze" target="_blank" class="inline-flex items-center mt-2 text-red-400 hover:text-red-300">
-                <i class="fab fa-discord mr-2"></i>
-                <span>Discord.gg/fivemaze</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Category Sections -->
-      <div class="content-section" id="technical-section">
-        <h2 class="text-xl font-bold mb-6">Texniki Suallar</h2>
-        <div id="technical-questions-container">
-          <!-- Technical questions will be loaded here -->
-        </div>
-      </div>
-      
-      <div class="content-section" id="game-section">
-        <h2 class="text-xl font-bold mb-6">Oyun İçi Suallar</h2>
-        <div id="game-questions-container">
-          <!-- Game questions will be loaded here -->
-        </div>
-      </div>
-      
-      <!-- Özel Maşınlar Section -->
-      <div class="content-section" id="special-section">
-        <h2 class="text-xl font-bold mb-6">Özel Maşınlar</h2>
-        
-        <!-- VIP Maşınları -->
-        <div class="glass-card rounded-lg p-6 mb-6">
-          <div class="flex items-center mb-6">
-            <div class="w-12 h-12 rounded-lg bg-red-600 flex items-center justify-center mr-4">
-              <i class="fas fa-crown text-white text-xl"></i>
-            </div>
-            <div>
-              <h2 class="text-2xl font-bold">Özel Maşınlar</h2>
-              <p class="text-gray-500">VIP üçün xüsusi maşınlar və əlavələr</p>
-            </div>
-          </div>
-          
-          <div class="space-y-8">
-            <!-- 07 Video -->
-            <div>
-              <h3 class="text-lg font-bold mb-4">07 VIP Maşını</h3>
-              <div class="video-container">
-                <video controls>
-                  <source src="./07.mp4" type="video/mp4">
-                  Sizin brauzer video tagını dəstəkləmir.
-                </video>
-              </div>
-              <div class="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h4 class="font-bold mb-2">Xüsusiyyətlər:</h4>
-                <ul class="list-disc pl-5 space-y-1">
-                  <li>Lider disk</li>
-                  <li>Amerikanka</li>
-                  <li>AMG rul</li>
-                  <li>Rolls-Royce Dam</li>
-                  <li>Ambians salon</li>
-                  <li>Powerful</li>
-                  <li>Xor-xor səs</li>
-                  <li>Vspışka (qabaq və arxa fara)</li>
-                  <li>"Sağ ol ay brat" siqnal</li>
-                  <li>Üzərinə istəyidiniz nömrə əlavə edilə bilər</li>
-                </ul>
-              </div>
-            </div>
-            
-            <!-- Niva Video -->
-            <div>
-              <h3 class="text-lg font-bold mb-4">Niva VIP Maşını</h3>
-              <div class="video-container">
-                <video controls>
-                  <source src="./niva.mp4" type="video/mp4">
-                  Sizin brauzer video tagını dəstəkləmir.
-                </video>
-              </div>
-              <div class="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h4 class="font-bold mb-2">Xüsusiyyətlər:</h4>
-                <ul class="list-disc pl-5 space-y-1">
-                  <li>Urban disk</li>
-                  <li>Arxa pərdələr</li>
-                  <li>S güzgülər</li>
-                  <li>Yeni stop faralar</li>
-                  <li>Wrangler fara</li>
-                  <li>Powerful</li>
-                  <li>Xor-xor səs</li>
-                  <li>Vspışka (qabaq və arxa fara)</li>
-                  <li>Fifa siqnal</li>
-                  <li>Üzərinə istəyidiniz nömrə əlavə edilə bilər</li>
-                </ul>
-              </div>
-            </div>
-            
-           <!-- Donate Məlumatları -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FivemAze Freeroam</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="icon" type="image/png" href="/favicon.png">
+<style>
+:root {
+--bg-primary: #0f0f13;
+--bg-secondary: #1a1a1f;
+--bg-card: #1e1e24;
+--text-primary: #e0e0e0;
+--text-secondary: #8a8a8a;
+--border-color: #2a2a2f;
+--accent-color: #d32f2f;
+--accent-secondary: #2c5282;
+--sidebar-bg: #16161a;
+}
+
+.light-mode {
+--bg-primary: #f8f9fa;
+--bg-secondary: #ffffff;
+--bg-card: #ffffff;
+--text-primary: #2d3748;
+--text-secondary: #718096;
+--border-color: #e2e8f0;
+--accent-color: #c53030;
+--accent-secondary: #2b6cb0;
+--sidebar-bg: #f1f5f9;
+}
+
+* {
+scroll-behavior: smooth;
+}
+
+body {
+font-family: 'Inter', sans-serif;
+background: var(--bg-primary);
+color: var(--text-primary);
+min-height: 100vh;
+margin: 0;
+transition: all 0.3s ease;
+}
+
+body.welcome-active {
+overflow: hidden;
+}
+
+.glass-card {
+background: var(--bg-card);
+border: 1px solid var(--border-color);
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+transition: all 0.3s ease;
+}
+
+.sidebar {
+background: var(--sidebar-bg);
+border-right: 1px solid var(--border-color);
+height: 100vh;
+position: fixed;
+left: 0;
+top: 0;
+width: 280px;
+overflow-y: auto;
+z-index: 50;
+}
+
+.main-content {
+margin-left: 280px;
+padding: 20px;
+min-height: 100vh;
+}
+
+@media (max-width: 1024px) {
+.sidebar {
+transform: translateX(-100%);
+transition: transform 0.3s ease;
+}
+
+.sidebar.active {
+transform: translateX(0);
+}
+
+.main-content {
+margin-left: 0;
+}
+
+.sidebar-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.5);
+z-index: 40;
+}
+
+.sidebar-overlay.active {
+display: block;
+}
+}
+
+.faq-item {
+margin-bottom: 12px;
+border-radius: 8px;
+overflow: hidden;
+transition: all 0.3s ease;
+background: var(--bg-card);
+}
+
+.faq-question {
+padding: 16px;
+cursor: pointer;
+display: flex;
+justify-content: space-between;
+align-items: center;
+transition: all 0.3s ease;
+border-bottom: 1px solid var(--border-color);
+}
+
+.faq-question:hover {
+background: rgba(255, 255, 255, 0.03);
+}
+
+.faq-answer {
+padding: 0;
+max-height: 0;
+overflow: hidden;
+opacity: 0;
+transition: all 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+padding: 16px;
+max-height: 5000px;
+opacity: 1;
+}
+
+.faq-toggle {
+transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-toggle {
+transform: rotate(180deg);
+}
+
+.category-header {
+margin: 24px 0 12px;
+padding-bottom: 8px;
+border-bottom: 2px solid var(--border-color);
+font-size: 1.25rem;
+font-weight: 600;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+width: 6px;
+}
+
+::-webkit-scrollbar-track {
+background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+background: rgba(100, 100, 100, 0.5);
+border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+background: rgba(100, 100, 100, 0.7);
+}
+
+/* Question numbers */
+.question-number {
+width: 28px;
+height: 28px;
+background: #bc3b3b;
+color: #fff;
+border-radius: 6px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 12px;
+font-weight: 600;
+flex-shrink: 0;
+}
+
+.light-mode .question-number {
+background: #4a5568;
+color: #fff;
+}
+
+/* Code blocks */
+.code-block {
+background: rgba(0, 0, 0, 0.2);
+border-left: 3px solid var(--accent-color);
+padding: 12px;
+border-radius: 6px;
+font-family: 'Courier New', monospace;
+font-size: 14px;
+margin: 12px 0;
+overflow-x: auto;
+}
+
+.light-mode .code-block {
+background: rgba(0, 0, 0, 0.05);
+}
+
+/* Light mode adjustments */
+.light-mode .faq-question:hover {
+background: rgba(0, 0, 0, 0.02);
+}
+
+/* Mobile menu button */
+.mobile-menu-btn {
+position: fixed;
+top: 20px;
+left: 20px;
+z-index: 100;
+background: var(--accent-color);
+color: white;
+width: 40px;
+height: 40px;
+border-radius: 8px;
+display: none;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+.mobile-menu-btn {
+display: flex;
+}
+}
+
+/* Active sidebar item */
+.sidebar-item {
+display: flex;
+align-items: center;
+padding: 12px 16px;
+border-radius: 8px;
+margin: 4px 12px;
+cursor: pointer;
+transition: all 0.3s ease;
+text-decoration: none;
+color: var(--text-primary);
+}
+
+.sidebar-item:hover {
+background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-item.active {
+background: rgba(211, 47, 47, 0.1);
+color: var(--accent-color);
+border-left: 3px solid var(--accent-color);
+}
+
+.light-mode .sidebar-item:hover {
+background: rgba(0, 0, 0, 0.05);
+}
+
+.light-mode .sidebar-item.active {
+background: rgba(197, 48, 48, 0.1);
+}
+
+/* Content sections */
+.content-section {
+display: none;
+animation: fadeIn 0.3s ease;
+}
+
+.content-section.active {
+display: block;
+}
+
+@keyframes fadeIn {
+from {
+opacity: 0;
+transform: translateY(10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+/* No results message */
+.no-results {
+text-align: center;
+padding: 40px 20px;
+color: var(--text-secondary);
+}
+
+/* Support message */
+.support-message {
+background: rgba(211, 47, 47, 0.1);
+border: 1px solid rgba(211, 47, 47, 0.2);
+border-radius: 8px;
+padding: 16px;
+margin-top: 20px;
+}
+
+/* Logo container */
+.logo-container {
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 12px;
+width: 50px;
+height: 50px;
+font-weight: bold;
+color: white;
+}
+
+.logo-img {
+width: 100%;
+height: 100%;
+object-fit: contain;
+}
+
+/* Banner Section */
+.banner-container {
+position: relative;
+height: 175px;
+overflow: hidden;
+border-radius: 12px;
+margin-bottom: 48px;
+}
+
+.banner-gif {
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+.banner-overlay {
+position: relative;
+z-index: 2;
+height: 100%;
+width: 100%;
+padding: 28px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+background: linear-gradient(to right,
+rgba(15, 15, 19, 0.9),
+rgba(15, 15, 19, 0.55),
+rgba(15, 15, 19, 0.9));
+}
+
+.banner-content {
+max-width: 70%;
+}
+
+/* Mobile fixes */
+@media (max-width: 768px) {
+.banner-container {
+height: 200px;
+margin-bottom: 32px;
+}
+
+.banner-content h1 {
+font-size: 1.5rem;
+}
+}
+
+.server-status {
+background: rgba(16, 185, 129, 0.15);
+border: 1px solid rgba(16, 185, 129, 0.35);
+color: #a7f3d0;
+border-radius: 10px;
+padding: 10px 16px;
+display: flex;
+align-items: center;
+gap: 10px;
+font-size: 14px;
+margin-bottom: 16px;
+}
+
+.server-status i {
+color: #22c55e;
+}
+
+/* Welcome overlay */
+#welcomeOverlay {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+z-index: 9999;
+transition: opacity 0.5s ease;
+background: linear-gradient(135deg, #0f0f13 0%, #1a1a2e 100%);
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+#welcomeOverlay.opacity-0 {
+opacity: 0;
+pointer-events: none;
+}
+
+#welcomeOverlay:before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: url('./raisen.gif') center/cover no-repeat;
+filter: blur(8px) brightness(0.4);
+z-index: 1;
+}
+
+.welcome-content {
+position: relative;
+z-index: 2;
+text-align: center;
+padding: 20px;
+}
+
+/* Staff sidebar styles */
+.staff-member {
+display: flex;
+align-items: center;
+padding: 12px 15px;
+border-radius: 8px;
+margin: 5px 12px;
+background: rgba(255, 255, 255, 0.03);
+transition: all 0.3s ease;
+border-left: 3px solid transparent;
+}
+
+.staff-member:hover {
+background: rgba(255, 255, 255, 0.05);
+transform: translateX(5px);
+}
+
+.staff-member.owner {
+border-left-color: #ffd700;
+}
+
+.staff-member.admin {
+border-left-color: #d32f2f;
+}
+
+.staff-member.manager {
+border-left-color: #1976d2;
+}
+
+.staff-member.bas-staff {
+border-left-color: #4caf50;
+}
+
+.staff-avatar-sidebar {
+width: 40px;
+height: 40px;
+border-radius: 50%;
+object-fit: cover;
+margin-right: 12px;
+border: 2px solid currentColor;
+}
+
+.staff-info {
+flex: 1;
+}
+
+.staff-name {
+font-weight: 600;
+font-size: 0.9rem;
+margin-bottom: 2px;
+}
+
+.staff-role {
+font-size: 0.75rem;
+color: #d32f2f;
+font-weight: 500;
+}
+
+/* Sidebar collapsible */
+.sidebar-collapsible {
+margin-top: 8px;
+}
+
+.sidebar-collapsible-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 12px 16px;
+cursor: pointer;
+border-radius: 8px;
+margin: 0 12px;
+transition: all 0.3s ease;
+}
+
+.sidebar-collapsible-header:hover {
+background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-collapsible-header i {
+transition: transform 0.3s ease;
+color: #8a8a8a;
+font-size: 0.8rem;
+}
+
+.sidebar-collapsible-content {
+max-height: 0;
+overflow: hidden;
+transition: max-height 0.3s ease;
+margin: 0 12px;
+}
+
+.sidebar-collapsible.active .sidebar-collapsible-content {
+max-height: 500px;
+overflow-y: auto;
+}
+
+.sidebar-collapsible.active .sidebar-collapsible-header i {
+transform: rotate(180deg);
+}
+
+/* Volume controls */
+.volume-controls {
+position: fixed;
+bottom: 20px;
+right: 20px;
+z-index: 100;
+opacity: 0.8;
+transition: opacity 0.3s ease;
+}
+
+.volume-controls:hover {
+opacity: 1;
+}
+
+.volume-panel {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 10px 15px;
+border-radius: 10px;
+}
+
+#volumeSlider {
+width: 100px;
+height: 5px;
+-webkit-appearance: none;
+background: rgba(255, 255, 255, 0.1);
+border-radius: 3px;
+outline: none;
+}
+
+#volumeSlider::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 15px;
+height: 15px;
+border-radius: 50%;
+background: #d32f2f;
+cursor: pointer;
+}
+
+.volume-tooltip {
+position: absolute;
+top: -25px;
+left: 50%;
+transform: translateX(-50%);
+background: rgba(0, 0, 0, 0.8);
+color: white;
+padding: 3px 8px;
+border-radius: 4px;
+font-size: 12px;
+white-space: nowrap;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+
+/* Music selection overlay */
+.music-selection-overlay {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+z-index: 9998;
+background: #000;
+display: flex;
+align-items: center;
+justify-content: center;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.5s ease;
+}
+
+.music-selection-overlay.active {
+opacity: 1;
+pointer-events: all;
+}
+
+.music-selection-container {
+background: #121212;
+border-radius: 12px;
+padding: 20px;
+max-width: 500px;
+width: 95%;
+max-height: 90vh;
+overflow-y: auto;
+border: 1px solid #282828;
+}
+
+.music-selection-title {
+text-align: center;
+margin-bottom: 20px;
+padding-bottom: 15px;
+border-bottom: 1px solid #282828;
+}
+
+.music-selection-title h2 {
+font-size: 1.5rem;
+font-weight: 700;
+color: white;
+margin-bottom: 5px;
+}
+
+.music-selection-title p {
+color: #b3b3b3;
+font-size: 0.9rem;
+}
+
+.music-tracks-grid {
+display: flex;
+flex-direction: column;
+gap: 10px;
+margin-bottom: 20px;
+}
+
+.music-track-card {
+background: #181818;
+border-radius: 8px;
+padding: 12px;
+cursor: pointer;
+transition: all 0.3s ease;
+border: 2px solid transparent;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.music-track-card:hover {
+background: #282828;
+}
+
+.music-track-card.active {
+background: rgba(211, 47, 47, 0.1);
+border-color: #d32f2f;
+}
+
+.track-cover {
+width: 50px;
+height: 50px;
+border-radius: 6px;
+overflow: hidden;
+flex-shrink: 0;
+}
+
+.track-cover img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+.track-info {
+flex: 1;
+}
+
+.track-info h3 {
+font-size: 0.95rem;
+font-weight: 600;
+margin-bottom: 4px;
+color: white;
+}
+
+.track-info p {
+color: #b3b3b3;
+font-size: 0.8rem;
+}
+
+.track-icon {
+color: #1db954;
+font-size: 1.2rem;
+}
+
+.select-music-btn {
+display: block;
+margin: 0 auto;
+padding: 12px 30px;
+background: #181818;
+color: white;
+border: none;
+border-radius: 50px;
+font-size: 0.95rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.select-music-btn:hover {
+background: #b71c1c;
+transform: scale(1.05);
+}
+
+/* Video container */
+.video-container {
+width: 100%;
+max-width: 800px;
+margin: 20px auto;
+border-radius: 12px;
+overflow: hidden;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.video-container video {
+width: 100%;
+height: auto;
+display: block;
+}
+
+/* Shortcuts grid */
+.shortcuts-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+gap: 15px;
+margin-top: 20px;
+}
+
+.shortcut-category {
+background: rgba(40, 40, 48, 0.7);
+border-radius: 10px;
+padding: 20px;
+border-left: 4px solid #d32f2f;
+}
+
+.shortcut-category h3 {
+font-size: 1.1rem;
+font-weight: 600;
+margin-bottom: 15px;
+color: #fff;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.shortcut-category h3 i {
+color: #d32f2f;
+}
+
+.shortcut-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px 0;
+border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.shortcut-item:last-child {
+border-bottom: none;
+}
+
+.shortcut-keys {
+display: flex;
+gap: 5px;
+}
+
+.key {
+background: rgba(0, 0, 0, 0.3);
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 4px;
+padding: 4px 8px;
+font-family: 'Courier New', monospace;
+font-size: 12px;
+min-width: 30px;
+text-align: center;
+}
+
+.key.combo {
+background: rgba(211, 47, 47, 0.2);
+border-color: rgba(211, 47, 47, 0.4);
+}
+
+/* Fallback message */
+.fallback-message {
+background: rgba(245, 158, 11, 0.1);
+border: 1px solid rgba(245, 158, 11, 0.35);
+border-radius: 8px;
+padding: 12px 16px;
+margin-top: 15px;
+margin-bottom: 15px;
+font-size: 14px;
+}
+
+.fallback-message i {
+color: #f59e0b;
+margin-right: 8px;
+}
+</style>
+</head>
+<body class="relative welcome-active">
+<!-- MUSIC SELECTION OVERLAY -->
+<div id="musicSelectionOverlay" class="music-selection-overlay">
+<div class="music-selection-container">
+<div class="music-selection-title">
+<h2>FivemAze</h2>
+<p>Sayta daxil olmamışdan əvvəl, istədiyiniz fon musiqisini seçin</p>
+</div>
+
+<div class="music-tracks-grid">
+<!-- Track 1 -->
+<div class="music-track-card active" data-track="0">
+<div class="track-cover">
+<img src="./main.png" alt="The world we knew">
+</div>
+<div class="track-info">
+<h3>The world we knew</h3>
+</div>
+<div class="track-icon">
+<i class="fas fa-check-circle"></i>
+</div>
+</div>
+
+<!-- Track 2 -->
+<div class="music-track-card" data-track="1">
+<div class="track-cover">
+<img src="./main1.png" alt="yung kai - blue">
+</div>
+<div class="track-info">
+<h3>yung kai - blue</h3>
+</div>
+</div>
+
+<!-- Track 3 -->
+<div class="music-track-card" data-track="2">
+<div class="track-cover">
+<img src="./main2.png" alt="ati242 - maraton">
+</div>
+<div class="track-info">
+<h3>ati242 - maraton</h3>
+</div>
+</div>
+
+<!-- Track 4 -->
+<div class="music-track-card" data-track="3">
+<div class="track-cover">
+<img src="./main3.png" alt="my marmalade">
+</div>
+<div class="track-info">
+<h3>my marmalade by Katia Lel</h3>
+</div>
+</div>
+
+<!-- Track 5 -->
+<div class="music-track-card" data-track="4">
+<div class="track-cover">
+<img src="./main4.png" alt="Qara Gözlüm">
+</div>
+<div class="track-info">
+<h3>Nur Cəfərli x Ruzigar Qədirov — Qara Gözlüm</h3>
+</div>
+</div>
+</div>
+
+<button id="selectMusicBtn" class="select-music-btn">
+<i class="fas fa-check-circle"></i>
+Xoş Gəlmisiniz
+</button>
+</div>
+</div>
+
+<!-- WELCOME OVERLAY -->
+<div id="welcomeOverlay" class="flex items-center justify-center">
+<div class="welcome-content">
+<img src="./giris.png" class="w-32 mx-auto mb-6" />
+
+<h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+FivemAze
+</h1>
+
+<p class="text-gray-300 mb-8 max-w-xl mx-auto">
+Serverimizlə bağlı bütün məlumatları və sual-cavabları bu səhifədə tapa bilərsiniz.
+</p>
+
+<button
+id="enterSiteBtn"
+class="px-12 py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white text-lg font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+>
+Daxil ol
+</button>
+</div>
+</div>
+
+<!-- Mobile Menu Button -->
+<div class="mobile-menu-btn" id="mobileMenuBtn">
+<i class="fas fa-bars"></i>
+</div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+<!-- Logo -->
+<div class="p-6 border-b border-gray-800">
+<div class="flex items-center space-x-3">
+<div class="logo-container">
+<img src="./fivem.png" alt="FivemAze Logo" class="logo-img">
+</div>
+<div>
+<h1 class="text-2xl font-bold">FivemAze</h1>
+<div class="w-50 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent mx-auto mt-2"></div>
+</div>
+</div>
+</div>
+
+<!-- Search -->
+<div class="p-4 border-b border-gray-800">
+<div class="relative">
+<input type="text" placeholder="Sual axtar..." class="w-full bg-gray-900 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-red-500" id="searchInput">
+<i class="fas fa-search absolute left-3 top-2.5 text-gray-500"></i>
+</div>
+</div>
+
+<!-- Categories -->
+<div class="p-4">
+<div class="space-y-2">
+<a href="#" class="sidebar-item active" data-section="all">
+<i class="fas fa-list mr-3"></i>
+<span>Bütün Suallar</span>
+</a>
+<a href="#" class="sidebar-item" data-section="technical">
+<i class="fas fa-tools mr-3"></i>
+<span>Texniki Suallar</span>
+<span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">3</span>
+</a>
+<a href="#" class="sidebar-item" data-section="game">
+<i class="fas fa-gamepad mr-3"></i>
+<span>Oyun İçi Suallar</span>
+<span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">8</span>
+</a>
+<a href="#" class="sidebar-item" data-section="special">
+<i class="fas fa-car mr-3"></i>
+<span>Özel Maşınlar</span>
+<span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">2</span>
+</a>
+<a href="#" class="sidebar-item" data-section="problems">
+<i class="fas fa-question-circle mr-3"></i>
+<span>Problem Həll</span>
+<span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">3</span>
+</a>
+<a href="#" class="sidebar-item" data-section="controls">
+<i class="fas fa-keyboard mr-3"></i>
+<span>Qısayollar</span>
+<span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">4</span>
+</a>
+</div>
+</div>
+
+<!-- Heyet Komandası (Açılır-kapanır) -->
+<div class="sidebar-collapsible" id="staffCollapsible">
+<div class="sidebar-collapsible-header">
+<h3 class="font-medium text-gray-400">Heyət Komandamız</h3>
+<i class="fas fa-chevron-down text-xs"></i>
+</div>
+<div class="sidebar-collapsible-content">
+<div class="space-y-1 py-2" id="staffMembersList">
+<!-- Staff members will be populated by JavaScript -->
+</div>
+</div>
+</div>
+
+<!-- All Questions List (Açılır-kapanır) -->
+<div class="sidebar-collapsible" id="allQuestionsCollapsible">
+<div class="sidebar-collapsible-header">
+<h3 class="font-medium text-gray-400">Bütün Suallar</h3>
+<i class="fas fa-chevron-down text-xs"></i>
+</div>
+<div class="sidebar-collapsible-content">
+<div class="space-y-1 py-2" id="questionsList">
+<!-- Questions will be populated by JavaScript -->
+</div>
+</div>
+</div>
+
+<!-- Footer -->
+<div class="p-4 border-t border-gray-800 mt-auto text-center">
+<p class="text-sm text-gray-400">Made by <span class="font-semibold text-white">Raisen</span></p>
+<div class="flex justify-center space-x-5 my-3">
+<a href="https://discord.gg/fivemaze" target="_blank" class="text-gray-400 hover:text-indigo-400 transition">
+<i class="fab fa-discord text-lg"></i>
+</a>
+<a href="https://github.com/raisenrs" target="_blank" class="text-gray-400 hover:text-white transition">
+<i class="fab fa-github text-lg"></i>
+</a>
+</div>
+<p class="text-center text-xs text-gray-500 mt-3">© 2026 FivemAze.</p>
+<p class="text-center text-xs text-gray-500 mt-3">Bütün hüquqlar qorunur.</p>
+</div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+<div class="server-status glass-card">
+<i class="fas fa-circle"></i>
+<span><strong>Server Status:</strong> Hazırda normal vəziyyətdə işləyir</span>
+</div>
+
+<!-- Banner Section -->
+<div class="banner-container glass-card mb-8">
+<img src="./raisen.gif" alt="FivemAze Banner" class="banner-gif">
+<div class="banner-overlay">
+<div class="banner-content">
+<h1 class="text-3xl font-bold">Suallar və Cavabları</h1>
+<p class="text-gray-300 mt-2"> Serverimizlə bağlı ən çox soruşulan suallar və cavabları </p>
+</div>
+<div class="theme-toggle cursor-pointer p-2 rounded-lg bg-gray-900 bg-opacity-60 hover:bg-gray-700 transition-colors" id="themeToggle">
+<i class="fas fa-moon text-yellow-300"></i>
+</div>
+</div>
+</div>
+
+<!-- All Questions Content -->
+<div class="content-section active" id="all-section">
+<div id="all-questions-container">
+<!-- Questions will be loaded here by JavaScript -->
+</div>
+
+<!-- Support Message -->
+<div class="support-message mt-12">
+<div class="flex items-start space-x-3">
+<div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center flex-shrink-0">
+<i class="fas fa-question-circle text-white"></i>
+</div>
+<div>
+<h3 class="font-bold mb-2">Cavabını tapa bilmədiyiniz sualınız var?</h3>
+<p class="text-sm text-gray-300">Discord serverimizdə heyət üzvlərindən kömək ala bilərsiniz:</p>
+<a href="https://discord.gg/fivemaze" target="_blank" class="inline-flex items-center mt-2 text-red-400 hover:text-red-300">
+<i class="fab fa-discord mr-2"></i>
+<span>Discord.gg/fivemaze</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Category Sections -->
+<div class="content-section" id="technical-section">
+<h2 class="text-xl font-bold mb-6">Texniki Suallar</h2>
+<div id="technical-questions-container">
+<!-- Technical questions will be loaded here -->
+</div>
+</div>
+
+<div class="content-section" id="game-section">
+<h2 class="text-xl font-bold mb-6">Oyun İçi Suallar</h2>
+<div id="game-questions-container">
+<!-- Game questions will be loaded here -->
+</div>
+</div>
+
+<!-- Özel Maşınlar Section -->
+<div class="content-section" id="special-section">
+<h2 class="text-xl font-bold mb-6">Özel Maşınlar</h2>
+
+<!-- VIP Maşınları -->
+<div class="glass-card rounded-lg p-6 mb-6">
+<div class="flex items-center mb-6">
+<div class="w-12 h-12 rounded-lg bg-red-600 flex items-center justify-center mr-4">
+<i class="fas fa-crown text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-2xl font-bold">Özel Maşınlar</h2>
+<p class="text-gray-500">VIP üçün xüsusi maşınlar və əlavələr</p>
+</div>
+</div>
+
+<div class="space-y-8">
+<!-- 07 Video -->
+<div>
+<h3 class="text-lg font-bold mb-4">07 VIP Maşını</h3>
+<div class="video-container">
+<video controls>
+<source src="./07.mp4" type="video/mp4">
+Sizin brauzer video tagını dəstəkləmir.
+</video>
+</div>
+<div class="mt-4 p-4 bg-gray-800 rounded-lg">
+<h4 class="font-bold mb-2">Xüsusiyyətlər:</h4>
+<ul class="list-disc pl-5 space-y-1">
+<li>Lider disk</li>
+<li>Amerikanka</li>
+<li>AMG rul</li>
+<li>Rolls-Royce Dam</li>
+<li>Ambians salon</li>
+<li>Powerful</li>
+<li>Xor-xor səs</li>
+<li>Vspışka (qabaq və arxa fara)</li>
+<li>"Sağ ol ay brat" siqnal</li>
+<li>Üzərinə istəyidiniz nömrə əlavə edilə bilər</li>
+</ul>
+</div>
+</div>
+
+<!-- Niva Video -->
+<div>
+<h3 class="text-lg font-bold mb-4">Niva VIP Maşını</h3>
+<div class="video-container">
+<video controls>
+<source src="./niva.mp4" type="video/mp4">
+Sizin brauzer video tagını dəstəkləmir.
+</video>
+</div>
+<div class="mt-4 p-4 bg-gray-800 rounded-lg">
+<h4 class="font-bold mb-2">Xüsusiyyətlər:</h4>
+<ul class="list-disc pl-5 space-y-1">
+<li>Urban disk</li>
+<li>Arxa pərdələr</li>
+<li>S güzgülər</li>
+<li>Yeni stop faralar</li>
+<li>Wrangler fara</li>
+<li>Powerful</li>
+<li>Xor-xor səs</li>
+<li>Vspışka (qabaq və arxa fara)</li>
+<li>Fifa siqnal</li>
+<li>Üzərinə istəyidiniz nömrə əlavə edilə bilər</li>
+</ul>
+</div>
+</div>
+
+<!-- Donate Məlumatları -->
 <div class="bg-gradient-to-r from-[#181818] via-[#1f1f1f] to-[#181818] border border-gray-800 rounded-xl p-6">
-  <h3 class="text-xl font-bold mb-4 text-white">
-    Donate Məlumatları
-  </h3>
+<h3 class="text-xl font-bold mb-4 text-white">
+Donate Məlumatları
+</h3>
 
-  <p class="text-gray-400 mb-6">
-    Özel maşınlar, ymap/mlo paketləri, qrafik paketləri və digər bütün donate məlumatlarını 
-    Discord serverimizdəki xüsusi kanallardan öyrənə bilərsiniz.
-  </p>
+<p class="text-gray-400 mb-6">
+Özel maşınlar, ymap/mlo paketləri, qrafik paketləri və digər bütün donate məlumatlarını
+Discord serverimizdəki xüsusi kanallardan öyrənə bilərsiniz.
+</p>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    
-    <!-- Discord Kanalları -->
-    <div class="bg-[#121212] border border-gray-800 p-4 rounded-lg">
-      <h4 class="font-semibold mb-3 flex items-center gap-2 text-white">
-        Discord Kanalları
-      </h4>
-      <ul class="space-y-1 text-sm text-gray-400">
-        <li>#donate-məlumatları</li>
-        <li>#vip-status</li>
-        <li>#vip-maşınlar</li>
-        <li>#özəl-maşınlar</li>
-      </ul>
-    </div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-    <!-- VIP Üstünlükləri -->
-    <div class="bg-[#121212] border border-gray-800 p-4 rounded-lg">
-      <h4 class="font-semibold mb-3 flex items-center gap-2 text-white">
-        VIP Üstünlükləri
-      </h4>
-      <ul class="space-y-1 text-sm text-gray-400">
-        <li>Özel maşınlar</li>
-        <li>Teleport funksiyası</li>
-        <li>Prop Menyu</li>
-        <li>VIP Prefixi</li>
-      </ul>
-    </div>
+<!-- Discord Kanalları -->
+<div class="bg-[#121212] border border-gray-800 p-4 rounded-lg">
+<h4 class="font-semibold mb-3 flex items-center gap-2 text-white">
+Discord Kanalları
+</h4>
+<ul class="space-y-1 text-sm text-gray-400">
+<li>#donate-məlumatları</li>
+<li>#vip-status</li>
+<li>#vip-maşınlar</li>
+<li>#özəl-maşınlar</li>
+</ul>
+</div>
+
+<!-- VIP Üstünlükləri -->
+<div class="bg-[#121212] border border-gray-800 p-4 rounded-lg">
+<h4 class="font-semibold mb-3 flex items-center gap-2 text-white">
+VIP Üstünlükləri
+</h4>
+<ul class="space-y-1 text-sm text-gray-400">
+<li>Özel maşınlar</li>
+<li>Teleport funksiyası</li>
+<li>Prop Menyu</li>
+<li>VIP Prefixi</li>
+</ul>
 </div>
 </div>
 </div>
-  </div>
+</div>
+</div>
 </div>
 
-      
-      <div class="content-section" id="problems-section">
-        <h2 class="text-xl font-bold mb-6">Problem Həll Etmə</h2>
-        <div id="problems-questions-container">
-          <!-- Problem solving questions will be loaded here -->
-        </div>
-      </div>
-      
-      <!-- Game Controls Section -->
-      <div class="content-section" id="controls-section">
-        <div class="glass-card rounded-lg p-6 mb-6">
-          <div class="flex items-center mb-6">
-            <div class="w-12 h-12 rounded-lg bg-red-600 flex items-center justify-center mr-4">
-              <i class="fas fa-keyboard text-white text-xl"></i>
-            </div>
-            <div>
-              <h2 class="text-2xl font-bold">Qısayollar</h2>
-              <p class="text-gray-500">Serverdə istifadə olunan bütün qısayollar</p>
-            </div>
-          </div>
-          
-          <!-- Grid layout for shortcuts -->
-          <div class="shortcuts-grid">
-            <!-- Əsas Tuşlar -->
-            <div class="shortcut-category">
-              <h3><i class="fas fa-gamepad"></i> Əsas Tuşlar</h3>
-              <div class="space-y-2">
-                <div class="shortcut-item">
-                  <span>vMenu</span>
-                  <div class="shortcut-keys">
-                    <span class="key">M</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>NoClip</span>
-                  <div class="shortcut-keys">
-                    <span class="key">F2</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>vStancer</span>
-                  <div class="shortcut-keys">
-                    <span class="key">F3</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Emote menu</span>
-                  <div class="shortcut-keys">
-                    <span class="key">F5</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Miqalka menu</span>
-                  <div class="shortcut-keys">
-                    <span class="key">F6</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Avtomobil Kontrolları -->
-            <div class="shortcut-category">
-              <h3><i class="fas fa-car"></i> Avtomobil</h3>
-              <div class="space-y-2">
-                <div class="shortcut-item">
-                  <span>Handling menu</span>
-                  <div class="shortcut-keys">
-                    <span class="key">F7</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Engine Sound</span>
-                  <div class="shortcut-keys">
-                    <span class="key">F9</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>İdarəetmə paneli</span>
-                  <div class="shortcut-keys">
-                    <span class="key">F10</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Ragdoll (bayılma)</span>
-                  <div class="shortcut-keys">
-                    <span class="key">J</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Nitro</span>
-                  <div class="shortcut-keys">
-                    <span class="key combo">ALT</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- İnterfeys -->
-            <div class="shortcut-category">
-              <h3><i class="fas fa-desktop"></i> İnterfeys</h3>
-              <div class="space-y-2">
-                <div class="shortcut-item">
-                  <span>Ratsiya</span>
-                  <div class="shortcut-keys">
-                    <span class="key">U</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Speedometer</span>
-                  <div class="shortcut-keys">
-                    <span class="key">O</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Xəritə</span>
-                  <div class="shortcut-keys">
-                    <span class="key">P</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Çat</span>
-                  <div class="shortcut-keys">
-                    <span class="key">T</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Çatı gizlətmək/açmaq</span>
-                  <div class="shortcut-keys">
-                    <span class="key">L</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Digər -->
-            <div class="shortcut-category">
-              <h3><i class="fas fa-cogs"></i> Digər</h3>
-              <div class="space-y-2">
-                <div class="shortcut-item">
-                  <span>Barmaqla işarət</span>
-                  <div class="shortcut-keys">
-                    <span class="key">B</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Yenidən canlanma</span>
-                  <div class="shortcut-keys">
-                    <span class="key">E</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Kamera modu</span>
-                  <div class="shortcut-keys">
-                    <span class="key combo">DELETE</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Çat komandaları</span>
-                  <div class="shortcut-keys">
-                    <span class="key">/</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Polis Maşınları -->
-            <div class="shortcut-category">
-              <h3><i class="fas fa-user-shield"></i> Polis Maşınları</h3>
-              <div class="space-y-2">
-                <div class="shortcut-item">
-                  <span>Miqalka</span>
-                  <div class="shortcut-keys">
-                    <span class="key">Q</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Sirena</span>
-                  <div class="shortcut-keys">
-                    <span class="key combo">ALT</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Sağa işıq</span>
-                  <div class="shortcut-keys">
-                    <span class="key">+</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Sola işıq</span>
-                  <div class="shortcut-keys">
-                    <span class="key">-</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Qəza işıqları</span>
-                  <div class="shortcut-keys">
-                    <span class="key combo">BACKSPACE</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Chat Komandaları -->
-            <div class="shortcut-category">
-              <h3><i class="fas fa-comments"></i> Chat Komandaları</h3>
-              <div class="space-y-2">
-                <div class="shortcut-item">
-                  <span>Passive mod</span>
-                  <div class="shortcut-keys">
-                    <span class="key">/passiv</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Maşını təmir et</span>
-                  <div class="shortcut-keys">
-                    <span class="key">/fix</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Maşını təmizlə</span>
-                  <div class="shortcut-keys">
-                    <span class="key">/clean</span>
-                  </div>
-                </div>
-                <div class="shortcut-item">
-                  <span>Mahnı qoş</span>
-                  <div class="shortcut-keys">
-                    <span class="key">/pmms</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="content-section" id="problems-section">
+<h2 class="text-xl font-bold mb-6">Problem Həll Etmə</h2>
+<div id="problems-questions-container">
+<!-- Problem solving questions will be loaded here -->
+</div>
+</div>
 
-    <!-- Background Music -->
-    <audio id="bgMusic" src="./main.mp4" loop preload="auto"></audio>
-    
-    <!-- Səs idarəetmə paneli -->
-    <div class="volume-controls" style="display: none;">
-      <div class="volume-panel glass-card">
-        <button id="muteBtn" class="text-gray-300 hover:text-white transition">
-          <i class="fas fa-volume-up text-lg" id="volumeIcon"></i>
-        </button>
-        <div class="relative">
-          <input type="range" id="volumeSlider" min="0" max="100" value="35" class="w-24">
-          <div class="volume-tooltip" id="volumeTooltip">35%</div>
-        </div>
-      </div>
-    </div>
+<!-- Game Controls Section -->
+<div class="content-section" id="controls-section">
+<div class="glass-card rounded-lg p-6 mb-6">
+<div class="flex items-center mb-6">
+<div class="w-12 h-12 rounded-lg bg-red-600 flex items-center justify-center mr-4">
+<i class="fas fa-keyboard text-white text-xl"></i>
+</div>
+<div>
+<h2 class="text-2xl font-bold">Qısayollar</h2>
+<p class="text-gray-500">Serverdə istifadə olunan bütün qısayollar</p>
+</div>
+</div>
 
-    <script>
-      // Musiqi seçimləri
-      const musicTracks = [
-        {
-          id: 0,
-          name: "The world we knew",
-          artist: "FRANK SINATRA",
-          cover: "./main.png",
-          file: "./main.mp4"
-        },
-        {
-          id: 1,
-          name: "yung kai - blue",
-          artist: "Lo-fi və rahat ritmlər",
-          cover: "main1.png",
-          file: "./main1.mp4"
-        },
-        {
-          id: 2,
-          name: "ati242 - maraton",
-          artist: "Enerjili və motivasiyalı",
-          cover: "./main2.png",
-          file: "./main2.mp4"
-        },
-        {
-          id: 3,
-          name: "my marmalade by Katia Lel",
-          artist: "(TIKTOK VERSION)",
-          cover: "./main3.png",
-          file: "./main3.mp4"
-        },
-        {
-          id: 4,
-          name: "Nur Cəfərli x Ruzigar Qədirov — Qara Gözlüm",
-          artist: "Azərbaycan musiqisi",
-          cover: "./main4.png",
-          file: "./main4.mp4"
-        }
-      ];
+<!-- Grid layout for shortcuts -->
+<div class="shortcuts-grid">
+<!-- Əsas Tuşlar -->
+<div class="shortcut-category">
+<h3><i class="fas fa-gamepad"></i> Əsas Tuşlar</h3>
+<div class="space-y-2">
+<div class="shortcut-item">
+<span>vMenu</span>
+<div class="shortcut-keys">
+<span class="key">M</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>NoClip</span>
+<div class="shortcut-keys">
+<span class="key">F2</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>vStancer</span>
+<div class="shortcut-keys">
+<span class="key">F3</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Emote menu</span>
+<div class="shortcut-keys">
+<span class="key">F5</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Miqalka menu</span>
+<div class="shortcut-keys">
+<span class="key">F6</span>
+</div>
+</div>
+</div>
+</div>
 
-      // FAQ Data - Tüm sorular ID'leri ile birlikte
-      const faqData = [
-        {
-          id: 1,
-          number: "1",
-          category: "technical",
-          question: "Fivem-i Tamamilə Necə Sıfırlaya Bilərəm? (Fivem Hard Reset)",
-          description: "FiveM problemləri üçün ətraflı hard reset bələdçisi",
-          answer: `
-            <div class="space-y-4">
-              <div class="bg-yellow-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-yellow-300 font-medium">
-                  Qeyd: Bu əməliyyat yalnız FiveM-də crash, açılmama və serverə giriş problemləri zamanı tövsiyə olunur.
-                </p>
-              </div>
-              <p>
-                FiveM-də yaranan texniki problemləri aradan qaldırmaq üçün bütün FiveM məlumatlarını
-                tamamilə sıfırlaya bilərsiniz.
-              </p>
-              <div class="code-block">
-                <p>1. FiveM-i bağlayın və Task Manager (Ctrl + Shift + Esc) açaraq FiveM/CitizenFX proseslərini sonlandırın</p>
-                <p>2. FiveM shortcut-una sağ klik edin → "Fayl Yerini Aç"</p>
-                <p>3. "FiveM Application Data" qovluğunu açın</p>
-                <p>4. crashes və data qovluqlarını, həmçinin CitizenFX.ini faylını silin</p>
-                <p>5. Win + R → %localappdata% → FiveM qovluğunu silin</p>
-                <p>6. Win + R → %appdata% → CitizenFX qovluğunu silin</p>
-              </div>
-              <div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-green-300 font-medium">
-                  Proses tamamlandıqdan sonra FiveM-i yenidən başladın və problemin həll olunub-olunmadığını yoxlayın.
-                </p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [2, 3, 11]
-        },
-        {
-          id: 2,
-          number: "2",
-          category: "technical",
-          question: "Fivem Cache-i Necə Təmizləyə Bilərəm?",
-          description: "Cache təmizləmə və performans optimallaşdırma",
-          answer: `
-            <div class="space-y-4">
-              <div class="bg-yellow-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-yellow-300 font-medium">
-                  Qeyd: Cache təmizləmə əməliyyatını yalnız FiveM-də lag, crash,
-                  infinite loading və ya serverə giriş problemləri yaşadıqda edin.
-                </p>
-              </div>
-              <p><strong>FiveM cache-i nədir?</strong></p>
-              <p>
-                FiveM cache-i, oynadığınız serverlərə aid client tərəfli məlumatların
-                (xəritə, texture, script və s.) müvəqqəti olaraq saxlandığı fayllardır.
-                Zamanla bu fayllar problem yarada bilər.
-              </p>
-              <p><strong>FiveM Cache-i Necə Silinir?</strong></p>
-              <div class="code-block">
-                <p>1. FiveM proqramını tamamilə bağlayın</p>
-                <p>2. Task Manager (Ctrl + Shift + Esc) açaraq FiveM/CitizenFX proseslərinin bağlı olduğuna əmin olun</p>
-                <p>3. FiveM shortcut-una sağ klik edin → "Fayl Yerini Aç"</p>
-                <p>4. Açılan yerdə "data" qovluğuna daxil olun</p>
-                <p>5. Aşağıdakı qovluqları silin:</p>
-                <p>   - cache</p>
-                <p>   - server-cache</p>
-                <p>   - server-cache-priv</p>
-              </div>
-              <p><strong>Video izah:</strong></p>
-              <ul class="list-disc list-inside text-blue-400">
-                <li><a href="https://youtu.be/9Jq16iEzyOI" target="_blank">FiveM Cache Təmizləmə – YouTube</a></li>
-              </ul>
-              <div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-green-300 font-medium">
-                  Proses tamamlandıqdan sonra FiveM-i yenidən başladın və problemin
-                  həll olunub-olunmadığını yoxlayın.
-                </p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [1, 3, 10]
-        },
-        {
-          id: 3,
-          number: "3",
-          category: "technical",
-          question: "Discord Hesabımı FiveM-ə Necə Bağlaya Bilərəm?",
-          description: "Discord və FiveM inteqrasiyası",
-          answer: `
-            <div class="space-y-4">
-              <p>
-                FiveM-də serverlərə qoşularkən Discord hesabının bağlı olması tələb oluna bilər.
-                Aşağıdakı addımlarla Discord hesabınızı FiveM-ə düzgün şəkildə bağlaya bilərsiniz.
-              </p>
-              <p><strong>1 – Discord hesabını FiveM-ə bağlamaq</strong></p>
-              <div class="code-block">
-                <p>1. Discord hesabınıza daxil olun</p>
-                <p>2. Settings → Authorized Apps bölməsinə keçin</p>
-                <p>3. Siyahıda FiveM varsa, Deauthorize edin</p>
-                <p>4. Discord-u tam bağlayın (Task Manager-dən də bağlı olduğuna əmin olun)</p>
-                <p>5. FiveM proqramını açın</p>
-                <p>6. Discord-da açılan icazə pəncərəsində Authorize düyməsinə basın</p>
-              </div>
-              <p><strong>Video izah:</strong></p>
-              <ul class="list-disc list-inside text-blue-400">
-                <li><a href="https://youtu.be/JXHfYzcCW2w" target="_blank">Discord + FiveM Bağlantısı – YouTube</a></li>
-              </ul>
-              <p><strong>2 – Problem həll etmə</strong></p>
-              <p>
-                Əgər Discord-da FiveM üçün icazə pəncərəsi açılmırsa və ya bağlantı
-                uğursuz olursa, aşağıdakı addımları yerinə yetirin:
-              </p>
-              <div class="code-block">
-                <p>1. Discord proqramını tamamilə bağlayın</p>
-                <p>2. Win + R → %appdata% yazın və Discord qovluğunu silin</p>
-                <p>3. Win + R → %localappdata% yazın və Discord qovluğunu silin</p>
-                <p>4. Discord-u rəsmi saytından yenidən yükləyib quraşdırın</p>
-                <p>5. Discord-a daxil olun və FiveM-i yenidən açaraq icazəni təsdiqləyin</p>
-              </div>
-              <div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-green-300 font-medium">
-                  Proses tamamlandıqdan sonra FiveM serverinə yenidən qoşulun və
-                  Discord bağlantısının düzgün işlədiyini yoxlayın.
-                </p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [1, 2, 8]
-        },
-        {
-          id: 4,
-          number: "4",
-          category: "game",
-          question: "Serverda Necə Maşın Sürmək Olar?",
-          description: "Avtomobil spawn etmək və modifiye etmək",
-          answer: `
-            <div class="space-y-4">
-              <p>Serverdə maşın sürmək və onu modifiye etmək üçün aşağıdakı addımları izləyə bilərsiniz:</p>
-              <p><strong>Maşın spawn etmək:</strong></p>
-              <div class="code-block">
-                <p>M → Vehicle Related Options → Vehicle Spawner → Addon Vehicles</p>
-              </div>
-              <p><strong>Maşını modifiye etmək:</strong></p>
-              <div class="code-block">
-                <p>M → Vehicle Related Options → Vehicle Options</p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [5, 6, 9]
-        },
-        {
-          id: 5,
-          number: "5",
-          category: "game",
-          question: "Miqalka və Havanı Necə Dəyişə Bilərəm?",
-          description: "Miqalka qoşmaq və hava dəyişdirmək",
-          answer: `
-            <div class="space-y-4">
-              <p>Miqalkanı qoşmaq və serverdə hava şəraitini dəyişmək üçün aşağıdakı addımları izləyə bilərsiniz:</p>
-              <p><strong>Miqalka qoşmaq:</strong></p>
-              <div class="code-block">
-                <p>DYP-ə gedin → F6 düyməsinə basın</p>
-              </div>
-              <p><strong>Havanı dəyişmək:</strong></p>
-              <div class="code-block">
-                <p>ESC düyməsinin altındakı <code>&#96;</code> düyməsinə basaraq hava seçimlərini dəyişə bilərsiniz</p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [4, 6, 7]
-        },
-        {
-          id: 6,
-          number: "6",
-          category: "game",
-          question: "Teleport Necə Edə Bilərəm?",
-          description: "Tez yer dəyişdirmək və oyunçuya teleport",
-          answer: `
-            <div class="space-y-4">
-              <p>Serverdə teleport istifadə edərək sürətli şəkildə yer dəyişdirə bilərsiniz.</p>
-              <p><strong>Məkana teleport etmək:</strong></p>
-              <div class="code-block">
-                <p>M → Misc Settings → Teleport Options</p>
-              </div>
-              <p>Teleport Options bölməsində serverdəki bütün əsas məkanları görə bilərsiniz.</p>
-              <p><strong>Oyunçuya teleport etmək:</strong></p>
-              <p>Qeyd: Oyunçuya teleport etmək üçün VIP statusuna sahib olmalısınız.</p>
-              <div class="code-block">
-                <p>M → Online Players</p>
-                <p>İstədiyiniz oyunçunu seçin → Teleport to Player</p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [4, 5, 7]
-        },
-        {
-          id: 7,
-          number: "7",
-          category: "game",
-          question: "Serverda Rul ilə sürmək, Silah Seçmək, Paltar Dəyişmək və Video Qeyd Etmək Necə Edilir?",
-          description: "Rul prosesi, silah, görünüş və oyun içi qeyd",
-          answer: `
-            <div class="space-y-4">
-              <p>
-                Serverdə rul almaq, silah seçmək, paltar dəyişmək və oyun görüntülərini
-                qeyd etmək üçün aşağıdakı qaydalar və menyular mövcuddur.
-              </p>
-              <p><strong>1 – Rul alma prosesi:</strong></p>
-              <p>
-                Serverdə rul almaq üçün lisenziya prosesi tətbiq olunur.
-                Bunun üçün ticket açmalı və adminlərdən birinin sizinlə əlaqə saxlamasını
-                səbrlə gözləməlisiniz.
-              </p>
-              <div class="bg-red-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-red-300 font-medium">
-                  Xahiş edirik: Adminləri Discord şəxsi mesaj, @mention və ya digər yollarla
-                  narahat etməyin. Bütün müraciətlər yalnız ticket sistemi üzərindən baxılır.
-                </p>
-              </div>
-              <p><strong>2 – Silah seçmək:</strong></p>
-              <div class="code-block">
-                <p>M → Player Related Options → Weapon Options → Get All Weapons</p>
-              </div>
-              <p>Bu menyu vasitəsilə mövcud olan silahları seçə bilərsiniz.</p>
-              <p><strong>3 – Paltar və görünüş dəyişmək:</strong></p>
-              <div class="code-block">
-                <p>M → Player Related Options → Player Appearance</p>
-                <p>M → Player Related Options → MP Ped Customization → Save</p>
-              </div>
-              <p>Paltar və xarici görünüş dəyişikliklərini etdikdən sonra mütləq <strong>Save</strong> edin.</p>
-              <p><strong>4 – Oyun görüntüsünü qeyd etmək (video çəkmək):</strong></p>
-              <div class="code-block">
-                <p>M → Recording Options → Start Recording</p>
-              </div>
-              <p>Qeyd olunan videoları sonradan <strong>Rockstar Editor</strong> vasitəsilə
-              izləyə və eksport edə bilərsiniz.</p>
-            </div>
-          `,
-          similarQuestions: [4, 5, 6]
-        },
-        {
-          id: 8,
-          number: "8",
-          category: "game",
-          question: "Olduğum Ölkədə Discord Qadağandır, Nə Edə Bilərəm?",
-          description: "Discord-a alternativ giriş üsulları",
-          answer: `
-            <div class="space-y-4">
-              <p>
-                Əgər yaşadığınız ölkədə Discord-a giriş qadağandırsa, VPN istifadə etmədən
-                alternativ üsullarla Discord-a daxil ola bilərsiniz.
-              </p>
-              <div class="bg-yellow-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-yellow-300 font-medium">
-                  Qeyd: VPN proqramları FiveM-də lag və crash problemlərinə səbəb ola bilər.
-                  Bu səbəbdən VPN istifadəsi tövsiyə olunmur.
-                </p>
-              </div>
-              <p>
-                Discord-a giriş üçün ən çox tövsiyə olunan üsullardan biri
-                <strong>GoodbyeDPI</strong> proqramıdır. Bu proqram internet
-                məhdudiyyətlərini aşmaq üçün yüngül və pulsuz həll təqdim edir.
-              </p>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                <div class="bg-gray-800 p-4 rounded-lg">
-                  <p class="font-medium mb-2">GoodbyeDPI nədir?</p>
-                  <p class="text-sm text-gray-400">
-                    Məhdudlaşdırılmış sayt və servislərə giriş imkanı verən,
-                    pulsuz və yüngül proqramdır.
-                  </p>
-                </div>
-                <div class="bg-gray-800 p-4 rounded-lg">
-                  <p class="font-medium mb-2">VPN ilə müqayisə</p>
-                  <p class="text-sm text-gray-400">
-                    GoodbyeDPI VPN-dən fərqli olaraq internet sürətini azaldmır
-                    və oyun zamanı daha stabil işləyir.
-                  </p>
-                </div>
-                <div class="bg-gray-800 p-4 rounded-lg">
-                  <p class="font-medium mb-2">FiveM ilə uyğunluq</p>
-                  <p class="text-sm text-gray-400">
-                    VPN-lər FiveM-də crash yarada bilər, GoodbyeDPI isə
-                    oyun performansına təsir etmir.
-                  </p>
-                </div>
-              </div>
-              <div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-green-300 font-medium">
-                  GoodbyeDPI aktiv edildikdən sonra Discord-u açaraq
-                  serverlərə problemsiz şəkildə qoşula bilərsiniz.
-                </p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [3, 11, 12]
-        },
-        {
-          id: 9,
-          number: "9",
-          category: "game",
-          question: "Maşın Tam Yüklənmir, Nə Edə Bilərəm?",
-          description: "Maşın yüklənmə problemləri",
-          answer: `
-            <div class="space-y-4">
-              <p>Əgər maşının yarısı görünür, yarısı görünmürsə:</p>
-              <div class="code-block">
-                <p>1. vMenu-də (M düyməsi) Vehicle Options bölməsinə daxil olun</p>
-                <p>2. "Left Wing" ayarını tapın və aktiv edin</p>
-              </div>
-              <div class="bg-yellow-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-yellow-300">Əgər problem davam edirsə, bu maşın modunun özündə olan bir xətadan qaynaqlana bilər. Xahiş olunur, bu problemi server admin heyətinə bildirin.</p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [4, 10, 11]
-        },
-        {
-          id: 10,
-          number: "10",
-          category: "game",
-          question: "Maşın / Xəritə (Map) Yüklənmir, Nə Etməliyəm?",
-          description: "Yüklənmə problemləri",
-          answer: `
-            <div class="space-y-4">
-              <p><strong>Ola biləcək səbəblər:</strong></p>
-              <ul class="list-disc pl-5 space-y-1">
-                <li>İnternet sürətinizin aşağı olması (ən az 20 Mbps)</li>
-                <li>Olduğunuz ərazidə çox sayda yüklənəcək obyekt olması</li>
-                <li>Sistemin modlarla işləmək üçün kifayət etməməsi</li>
-                <li>Serverin çox məşğul olması</li>
-              </ul>
-              <p><strong>Həll yolları:</strong></p>
-              <div class="code-block">
-                <p>1. Bir müddət gözləyin</p>
-                <p>2. FiveM cache təmizləyin</p>
-                <p>3. Serverdan çıxıb yenidən daxil olun</p>
-              </div>
-              <p><strong>Xəritə yüklənmirsə – alternativ həll:</strong></p>
-              <div class="code-block">
-                ESC → Settings → Graphics → Extended Texture Budget
-              </div>
-              <p>Bu parametrin dəyərini təxminən iki dəfə artırın.</p>
-            </div>
-          `,
-          similarQuestions: [2, 9, 11]
-        },
-        {
-          id: 11,
-          number: "11",
-          category: "problems",
-          question: "Davamlı Olaraq Crash Yeyirəm və Bu Yalnız Sizin Serverinizdə Baş Verir?",
-          description: "Crash və stabil olmayan oyun problemləri",
-          answer: `
-            <div class="space-y-4">
-              <div class="bg-red-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-red-300 font-medium">Server Tərəfində Problem YOXDUR</p>
-                <p>
-                  Yaşadığınız crash problemi serverimizdən qaynaqlanmır.
-                  Server tərəfində hər hansı bir xəta və ya crash qeydi mövcud deyil.
-                </p>
-              </div>
-              <p><strong>Bu tip crash problemləri adətən aşağıdakı səbəblərdən yaranır:</strong></p>
-              <ul class="list-disc pl-5 space-y-1">
-                <li>Oyunçunun şəxsi kompüteri və sistem problemləri</li>
-                <li>İstifadə olunan mod, cheat və ya arxa planda işləyən proqramlar</li>
-                <li>FiveM yeniləmələrindən sonra yaranan uyğunsuzluqlar</li>
-                <li>GTA V fayllarının zədələnməsi</li>
-              </ul>
-              <p><strong>Tövsiyə olunan həll yolları:</strong></p>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-                <div class="bg-gray-800 p-3 rounded text-sm">Cheat / mod proqramlarını tam silin</div>
-                <div class="bg-gray-800 p-3 rounded text-sm">FiveM cache təmizləyin</div>
-                <div class="bg-gray-800 p-3 rounded text-sm">FiveM hard reset edin</div>
-                <div class="bg-gray-800 p-3 rounded text-sm">GTA V fayllarını verify edin</div>
-                <div class="bg-gray-800 p-3 rounded text-sm">Windows və driverləri yeniləyin</div>
-                <div class="bg-gray-800 p-3 rounded text-sm">Aldığınız xətanı Google-da axtarın</div>
-              </div>
-              <div class="bg-red-900 bg-opacity-20 p-4 rounded-lg mt-4">
-                <p class="font-medium">
-                  QEYD: Əgər problem serverdən qaynaqlansaydı,
-                  bütün oyunçular eyni anda crash problemi yaşayardı.
-                  Bu səbəbdən problem fərdi (client-side) hesab olunur.
-                </p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [1, 2, 10]
-        },
-        {
-          id: 12,
-          number: "12",
-          category: "problems",
-          question: "vMenu-də Qeyd Edilmiş Məzmunları Necə Ehtiyatda Saxlaya Bilərəm?",
-          description: "vMenu məlumatlarının qorunması və bərpası",
-          answer: `
-            <div class="space-y-4">
-              <p>
-                Bu üsul FiveM-i sıfırlayacaq, yenidən quracaq və ya kompüterinə format
-                atacaq oyunçular üçün vMenu ayarlarını və yadda saxlanılan məlumatları
-                qorumağa kömək edir.
-              </p>
-              <p><strong>Ehtiyat nüsxəsi (Backup) yaratmaq:</strong></p>
-              <div class="code-block">
-                <p>1. Windows + R düymələrinə basın</p>
-                <p>2. %appdata% yazın və Enter basın</p>
-                <p>3. CitizenFX qovluğunu tapın</p>
-                <p>4. kvs qovluğunu kopyalayın</p>
-                <p>5. Təhlükəsiz bir yerə (Desktop, USB və s.) yapışdırın</p>
-              </div>
-              <p><strong>Ehtiyat nüsxəni geri yükləmək:</strong></p>
-              <div class="code-block">
-                <p>1. FiveM-i sıfırladıqdan və ya yenidən quraşdırdıqdan sonra</p>
-                <p>2. Yenidən Windows + R → %appdata%</p>
-                <p>3. CitizenFX qovluğuna daxil olun</p>
-                <p>4. Saxladığınız kvs qovluğunu buraya geri kopyalayın</p>
-              </div>
-              <div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
-                <p class="text-green-300 font-medium">
-                  ✅ Əməliyyat tamamlandı. İndi FiveM-ə daxil olaraq
-                  vMenu ayarlarınızı əvvəlki kimi istifadə edə bilərsiniz.
-                </p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [1, 2, 3]
-        },
-        {
-          id: 13,
-          number: "13",
-          category: "problems",
-          question: "VIP tələb olunan xətanı alıram, bu nədir?",
-          description: "VIP olmayan oyunçular üçün məhdudiyyət xətası",
-          answer: `
-            <div class="space-y-6">
-              <div class="bg-red-900 bg-opacity-20 border border-red-700 rounded-xl p-5">
-                <h3 class="text-lg font-bold text-red-400 mb-2">Xəta nümünəsi</h3>
-                <p class="text-gray-300">
-                  Əgər bu xətanı görürsünüzsə, istifadə etdiyiniz funksiya
-                  <strong class="text-red-400">yalnız VIP oyunçular</strong> üçün açıqdır.
-                </p>
-              </div>
-              <div class="flex justify-center">
-                <div class="bg-black bg-opacity-40 p-4 rounded-xl">
-                  <img src="./xeta.png" alt="VIP Error" class="w-[420px] max-w-full rounded-xl object-contain border border-gray-700 shadow-lg">
-                </div>
-              </div>
-              <div class="bg-yellow-900 bg-opacity-20 border border-yellow-700 rounded-xl p-5">
-                <p class="text-yellow-300 font-medium">
-                  Bu xəta server tərəfindən qoyulmuş VIP məhdudiyyətinə görə çıxır.
-                </p>
-                <p class="text-gray-300 mt-2">
-                  Problemin aradan qalxması üçün VIP status almalısınız.
-                </p>
-              </div>
-              <div class="bg-gray-800 bg-opacity-40 rounded-xl p-5">
-                <h3 class="text-lg font-bold text-white mb-3">VIP necə ala bilərəm?</h3>
-                <ul class="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Discord serverimizə daxil olun</li>
-                  <li>VIP məlumatları olan kanala baxın</li>
-                  <li>Ticket açaraq müraciət edin</li>
-                </ul>
-              </div>
-            </div>
-          `,
-          similarQuestions: [6, 7]
-        },
-        {
-          id: 14,
-          number: "14",
-          category: "game",
-          question: "Donate məlumatlarını haradan və necə öyrənə bilərəm?",
-          description: "VIP, maşınlar, ymap, qrafik paketləri və digər donate məlumatları",
-          answer: `
-            <div class="space-y-6">
-              <p class="text-gray-300">
-                Serverimizdə mövcud olan <strong>VIP paketləri</strong>, 
-                <strong>xüsusi maşınlar</strong>, <strong>ymap / mlo</strong>,
-                <strong>qrafik paketləri</strong> və digər bütün donate məlumatlarını
-                Discord serverimizdə yerləşən xüsusi kanallardan öyrənə bilərsiniz.
-              </p>
+<!-- Avtomobil Kontrolları -->
+<div class="shortcut-category">
+<h3><i class="fas fa-car"></i> Avtomobil</h3>
+<div class="space-y-2">
+<div class="shortcut-item">
+<span>Handling menu</span>
+<div class="shortcut-keys">
+<span class="key">F7</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Engine Sound</span>
+<div class="shortcut-keys">
+<span class="key">F9</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>İdarəetmə paneli</span>
+<div class="shortcut-keys">
+<span class="key">F10</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Ragdoll (bayılma)</span>
+<div class="shortcut-keys">
+<span class="key">J</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Nitro</span>
+<div class="shortcut-keys">
+<span class="key combo">ALT</span>
+</div>
+</div>
+</div>
+</div>
 
-              <div class="flex justify-center">
-                <div class="bg-black bg-opacity-40 p-4 rounded-xl">
-                  <img
-                    src="./discord.png"
-                    alt="Donate Discord Kanalları"
-                    class="w-[420px] max-w-full rounded-xl object-contain border border-gray-700 shadow-lg"
-                  >
-                </div>
-              </div>
+<!-- İnterfeys -->
+<div class="shortcut-category">
+<h3><i class="fas fa-desktop"></i> İnterfeys</h3>
+<div class="space-y-2">
+<div class="shortcut-item">
+<span>Ratsiya</span>
+<div class="shortcut-keys">
+<span class="key">U</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Speedometer</span>
+<div class="shortcut-keys">
+<span class="key">O</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Xəritə</span>
+<div class="shortcut-keys">
+<span class="key">P</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Çat</span>
+<div class="shortcut-keys">
+<span class="key">T</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Çatı gizlətmək/açmaq</span>
+<div class="shortcut-keys">
+<span class="key">L</span>
+</div>
+</div>
+</div>
+</div>
 
-              <div class="bg-gray-800 bg-opacity-50 rounded-xl p-5">
-                <h3 class="text-lg font-bold text-white mb-3">Donate kanalları</h3>
-                <ul class="list-disc list-inside text-gray-300 space-y-1">
-                  <li><strong>#donate-məlumatları</strong> – ümumi donate açıqlamaları</li>
-                  <li><strong>#vip-status</strong> – VIP paketləri və üstünlükləri</li>
-                  <li><strong>#vip-maşınlar</strong> – VIP üçün xüsusi maşınlar</li>
-                  <li><strong>#özəl-maşınlar</strong> – fərdi və limitli maşınlar</li>
-                  <li><strong>#ymap-mlo</strong> – ymap və mlo paketləri</li>
-                  <li><strong>#qrafik-paketi</strong> – vizual və qrafik əlavələr</li>
-                  <li><strong>#gta5-cd</strong> / <strong>#kofe-al</strong> – dəstək və ödəniş</li>
-                </ul>
-              </div>
+<!-- Digər -->
+<div class="shortcut-category">
+<h3><i class="fas fa-cogs"></i> Digər</h3>
+<div class="space-y-2">
+<div class="shortcut-item">
+<span>Barmaqla işarət</span>
+<div class="shortcut-keys">
+<span class="key">B</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Yenidən canlanma</span>
+<div class="shortcut-keys">
+<span class="key">E</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Kamera modu</span>
+<div class="shortcut-keys">
+<span class="key combo">DELETE</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Çat komandaları</span>
+<div class="shortcut-keys">
+<span class="key">/</span>
+</div>
+</div>
+</div>
+</div>
 
-              <div class="bg-yellow-900 bg-opacity-20 border border-yellow-700 rounded-xl p-5">
-                <p class="text-yellow-300 font-medium">Qeyd</p>
-                <p class="text-gray-300 mt-2">
-                  Əgər sualınızın cavabını yuxarıda qeyd olunan kanalların heç birində
-                  tapa bilməmisinizsə, narahat olmayın.
-                </p>
-              </div>
+<!-- Polis Maşınları -->
+<div class="shortcut-category">
+<h3><i class="fas fa-user-shield"></i> Polis Maşınları</h3>
+<div class="space-y-2">
+<div class="shortcut-item">
+<span>Miqalka</span>
+<div class="shortcut-keys">
+<span class="key">Q</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Sirena</span>
+<div class="shortcut-keys">
+<span class="key combo">ALT</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Sağa işıq</span>
+<div class="shortcut-keys">
+<span class="key">+</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Sola işıq</span>
+<div class="shortcut-keys">
+<span class="key">-</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Qəza işıqları</span>
+<div class="shortcut-keys">
+<span class="key combo">BACKSPACE</span>
+</div>
+</div>
+</div>
+</div>
 
-              <div class="bg-green-900 bg-opacity-20 border border-green-700 rounded-xl p-5">
-                <p class="text-green-300 font-medium">Alternativ kömək yolu</p>
-                <p class="text-gray-300 mt-2">
-                  Discord serverimizdə <strong>ticket açaraq</strong> və ya
-                  <strong>heyət üzvlərimizdən biri ilə əlaqə saxlayaraq</strong>
-                  donate mövzuları ilə bağlı ətraflı və dəqiq məlumat ala bilərsiniz.
-                </p>
-              </div>
+<!-- Chat Komandaları -->
+<div class="shortcut-category">
+<h3><i class="fas fa-comments"></i> Chat Komandaları</h3>
+<div class="space-y-2">
+<div class="shortcut-item">
+<span>Passive mod</span>
+<div class="shortcut-keys">
+<span class="key">/passiv</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Maşını təmir et</span>
+<div class="shortcut-keys">
+<span class="key">/fix</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Maşını təmizlə</span>
+<div class="shortcut-keys">
+<span class="key">/clean</span>
+</div>
+</div>
+<div class="shortcut-item">
+<span>Mahnı qoş</span>
+<div class="shortcut-keys">
+<span class="key">/pmms</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-              <div class="bg-gray-800 bg-opacity-40 rounded-xl p-5">
-                <p class="text-gray-300">
-                  ⚠️ Xahiş olunur, donate ilə bağlı suallar üçün heyət üzvlərini
-                  şəxsi mesajla narahat etməyin.
-                  Bütün müraciətlər yalnız <strong>Discord kanalları</strong>
-                  və ya <strong>ticket sistemi</strong> üzərindən cavablandırılır.
-                </p>
-              </div>
-            </div>
-          `,
-          similarQuestions: [13]
-        }
-      ];
+<!-- Background Music -->
+<audio id="bgMusic" src="./main.mp4" loop preload="auto"></audio>
 
-      // Sayfa yükləndikdə işləyəcək funksiyalar
-      document.addEventListener('DOMContentLoaded', function() {
-        // Tema yüklə
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-          document.body.classList.add('light-mode');
-          document.getElementById('themeToggle').querySelector('i').classList.remove('fa-moon');
-          document.getElementById('themeToggle').querySelector('i').classList.add('fa-sun');
-          document.getElementById('themeToggle').querySelector('i').classList.remove('text-yellow-300');
-          document.getElementById('themeToggle').querySelector('i').classList.add('text-yellow-500');
-        }
-        
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        
-        mobileMenuBtn.addEventListener('click', function() {
-          sidebar.classList.toggle('active');
-          sidebarOverlay.classList.toggle('active');
-        });
-        
-        sidebarOverlay.addEventListener('click', function() {
-          sidebar.classList.remove('active');
-          sidebarOverlay.classList.remove('active');
-        });
-        
-        // Tema dəyişmə
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = themeToggle.querySelector('i');
-        themeToggle.addEventListener('click', function() {
-          const body = document.body;
-          if (body.classList.contains('light-mode')) {
-            body.classList.remove('light-mode');
-            localStorage.setItem('theme', 'dark');
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
-            themeIcon.classList.remove('text-yellow-500');
-            themeIcon.classList.add('text-yellow-300');
-          } else {
-            body.classList.add('light-mode');
-            localStorage.setItem('theme', 'light');
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-            themeIcon.classList.remove('text-yellow-300');
-            themeIcon.classList.add('text-yellow-500');
-          }
-        });
-        
-        // Welcome button
-        const enterSiteBtn = document.getElementById('enterSiteBtn');
-        const welcomeOverlay = document.getElementById('welcomeOverlay');
-        const musicSelectionOverlay = document.getElementById('musicSelectionOverlay');
-        const body = document.body;
+<!-- Volume Controls -->
+<div class="volume-controls" style="display: none;">
+<div class="volume-panel glass-card">
+<button id="muteBtn" class="text-gray-300 hover:text-white transition">
+<i class="fas fa-volume-up text-lg" id="volumeIcon"></i>
+</button>
+<div class="relative">
+<input type="range" id="volumeSlider" min="0" max="100" value="35" class="w-24">
+<div class="volume-tooltip" id="volumeTooltip">35%</div>
+</div>
+</div>
+</div>
 
-        enterSiteBtn.addEventListener('click', function() {
-  welcomeOverlay.classList.add('opacity-0');
+<script>
+// Staff data
+const staffData = [
+{ name: "Jab", role: "Owner", image: "./jab.png", type: "owner" },
+{ name: "Jah", role: "Owner", image: "./jah.png", type: "owner" },
+{ name: "Poken", role: "Owner", image: "./poken.png", type: "owner" },
+{ name: "Ferid", role: "Manager", image: "./ferid.png", type: "manager" },
+{ name: "Ali", role: "Head Administrator", image: "./ali.png", type: "admin" },
+{ name: "Raisen", role: "Admin", image: "./raisen.png", type: "admin" },
+{ name: "Zyn", role: "Admin", image: "./zyn.png", type: "admin" },
+{ name: "Farid", role: "Bas Staff", image: "./farid.png", type: "bas-staff" },
+{ name: "Abbas", role: "Bas Staff", image: "./abbas.png", type: "bas-staff" },
+{ name: "Zyv", role: "Bas Staff", image: "./zyv.png", type: "bas-staff" }
+];
 
-  setTimeout(() => {
-    welcomeOverlay.style.display = 'none';
-    musicSelectionOverlay.classList.add('active');
-    body.classList.remove('welcome-active');
+// Musiqi seçimləri
+const musicTracks = [
+{
+id: 0,
+name: "The world we knew",
+artist: "FRANK SINATRA",
+cover: "./main.png",
+file: "./main.mp4"
+},
+{
+id: 1,
+name: "yung kai - blue",
+artist: "Lo-fi və rahat ritmlər",
+cover: "main1.png",
+file: "./main1.mp4"
+},
+{
+id: 2,
+name: "ati242 - maraton",
+artist: "Enerjili və motivasiyalı",
+cover: "./main2.png",
+file: "./main2.mp4"
+},
+{
+id: 3,
+name: "my marmalade by Katia Lel",
+artist: "(TIKTOK VERSION)",
+cover: "./main3.png",
+file: "./main3.mp4"
+},
+{
+id: 4,
+name: "Nur Cəfərli x Ruzigar Qədirov — Qara Gözlüm",
+artist: "Azərbaycan musiqisi",
+cover: "./main4.png",
+file: "./main4.mp4"
+}
+];
 
-    // ✅ BURASI ÇOK ÖNEMLİ
-    initializeAudioPreviews();
+// FAQ Data - Tüm sorular
+const faqData = [
+{
+id: 1,
+number: "1",
+category: "technical",
+question: "Fivem-i Tamamilə Necə Sıfırlaya Bilərəm? (Fivem Hard Reset)",
+description: "FiveM problemləri üçün ətraflı hard reset bələdçisi",
+answer: `
+<div class="space-y-4">
+<div class="bg-yellow-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-yellow-300 font-medium">
+Qeyd: Bu əməliyyat yalnız FiveM-də crash, açılmama və serverə giriş problemləri zamanı tövsiyə olunur.
+</p>
+</div>
+<p>
+FiveM-də yaranan texniki problemləri aradan qaldırmaq üçün bütün FiveM məlumatlarını
+tamamilə sıfırlaya bilərsiniz.
+</p>
+<div class="code-block">
+<p>1. FiveM-i bağlayın və Task Manager (Ctrl + Shift + Esc) açaraq FiveM/CitizenFX proseslərini sonlandırın</p>
+<p>2. FiveM shortcut-una sağ klik edin → "Fayl Yerini Aç"</p>
+<p>3. "FiveM Application Data" qovluğunu açın</p>
+<p>4. crashes və data qovluqlarını, həmçinin CitizenFX.ini faylını silin</p>
+<p>5. Win + R → %localappdata% → FiveM qovluğunu silin</p>
+<p>6. Win + R → %appdata% → CitizenFX qovluğunu silin</p>
+</div>
+<div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-green-300 font-medium">
+Proses tamamlandıqdan sonra FiveM-i yenidən başladın və problemin həll olunub-olunmadığını yoxlayın.
+</p>
+</div>
+</div>
+`,
+similarQuestions: [2, 3, 11]
+},
+{
+id: 2,
+number: "2",
+category: "technical",
+question: "Fivem Cache-i Necə Təmizləyə Bilərəm?",
+description: "Cache təmizləmə və performans optimallaşdırma",
+answer: `
+<div class="space-y-4">
+<div class="bg-yellow-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-yellow-300 font-medium">
+Qeyd: Cache təmizləmə əməliyyatını yalnız FiveM-də lag, crash,
+infinite loading və ya serverə giriş problemləri yaşadıqda edin.
+</p>
+</div>
+<p><strong>FiveM cache-i nədir?</strong></p>
+<p>
+FiveM cache-i, oynadığınız serverlərə aid client tərəfli məlumatların
+(xəritə, texture, script və s.) müvəqqəti olaraq saxlandığı fayllardır.
+Zamanla bu fayllar problem yarada bilər.
+</p>
+<p><strong>FiveM Cache-i Necə Silinir?</strong></p>
+<div class="code-block">
+<p>1. FiveM proqramını tamamilə bağlayın</p>
+<p>2. Task Manager (Ctrl + Shift + Esc) açaraq FiveM/CitizenFX proseslərinin bağlı olduğuna əmin olun</p>
+<p>3. FiveM shortcut-una sağ klik edin → "Fayl Yerini Aç"</p>
+<p>4. Açılan yerdə "data" qovluğuna daxil olun</p>
+<p>5. Aşağıdakı qovluqları silin:</p>
+<p> - cache</p>
+<p> - server-cache</p>
+<p> - server-cache-priv</p>
+</div>
+<p><strong>Video izah:</strong></p>
+<ul class="list-disc list-inside text-blue-400">
+<li><a href="https://youtu.be/9Jq16iEzyOI" target="_blank">FiveM Cache Təmizləmə – YouTube</a></li>
+</ul>
+<div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-green-300 font-medium">
+Proses tamamlandıqdan sonra FiveM-i yenidən başladın və problemin
+həll olunub-olunmadığını yoxlayın.
+</p>
+</div>
+</div>
+`,
+similarQuestions: [1, 3, 10]
+},
+{
+id: 3,
+number: "3",
+category: "technical",
+question: "Discord Hesabımı FiveM-ə Necə Bağlaya Bilərəm?",
+description: "Discord və FiveM inteqrasiyası",
+answer: `
+<div class="space-y-4">
+<p>
+FiveM-də serverlərə qoşularkən Discord hesabının bağlı olması tələb oluna bilər.
+Aşağıdakı addımlarla Discord hesabınızı FiveM-ə düzgün şəkildə bağlaya bilərsiniz.
+</p>
+<p><strong>1 – Discord hesabını FiveM-ə bağlamaq</strong></p>
+<div class="code-block">
+<p>1. Discord hesabınıza daxil olun</p>
+<p>2. Settings → Authorized Apps bölməsinə keçin</p>
+<p>3. Siyahıda FiveM varsa, Deauthorize edin</p>
+<p>4. Discord-u tam bağlayın (Task Manager-dən də bağlı olduğuna əmin olun)</p>
+<p>5. FiveM proqramını açın</p>
+<p>6. Discord-da açılan icazə pəncərəsində Authorize düyməsinə basın</p>
+</div>
+<p><strong>Video izah:</strong></p>
+<ul class="list-disc list-inside text-blue-400">
+<li><a href="https://youtu.be/JXHfYzcCW2w" target="_blank">Discord + FiveM Bağlantısı – YouTube</a></li>
+</ul>
+<p><strong>2 – Problem həll etmə</strong></p>
+<p>
+Əgər Discord-da FiveM üçün icazə pəncərəsi açılmırsa və ya bağlantı
+uğursuz olursa, aşağıdakı addımları yerinə yetirin:
+</p>
+<div class="code-block">
+<p>1. Discord proqramını tamamilə bağlayın</p>
+<p>2. Win + R → %appdata% yazın və Discord qovluğunu silin</p>
+<p>3. Win + R → %localappdata% yazın və Discord qovluğunu silin</p>
+<p>4. Discord-u rəsmi saytından yenidən yükləyib quraşdırın</p>
+<p>5. Discord-a daxil olun və FiveM-i yenidən açaraq icazəni təsdiqləyin</p>
+</div>
+<div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-green-300 font-medium">
+Proses tamamlandıqdan sonra FiveM serverinə yenidən qoşulun və
+Discord bağlantısının düzgün işlədiyini yoxlayın.
+</p>
+</div>
+</div>
+`,
+similarQuestions: [1, 2, 8]
+},
+{
+id: 4,
+number: "4",
+category: "game",
+question: "Serverda Necə Maşın Sürmək Olar?",
+description: "Avtomobil spawn etmək və modifiye etmək",
+answer: `
+<div class="space-y-4">
+<p>Serverdə maşın sürmək və onu modifiye etmək üçün aşağıdakı addımları izləyə bilərsiniz:</p>
+<p><strong>Maşın spawn etmək:</strong></p>
+<div class="code-block">
+<p>M → Vehicle Related Options → Vehicle Spawner → Addon Vehicles</p>
+</div>
+<p><strong>Maşını modifiye etmək:</strong></p>
+<div class="code-block">
+<p>M → Vehicle Related Options → Vehicle Options</p>
+</div>
+</div>
+`,
+similarQuestions: [5, 6, 9]
+},
+{
+id: 5,
+number: "5",
+category: "game",
+question: "Miqalka və Havanı Necə Dəyişə Bilərəm?",
+description: "Miqalka qoşmaq və hava dəyişdirmək",
+answer: `
+<div class="space-y-4">
+<p>Miqalkanı qoşmaq və serverdə hava şəraitini dəyişmək üçün aşağıdakı addımları izləyə bilərsiniz:</p>
+<p><strong>Miqalka qoşmaq:</strong></p>
+<div class="code-block">
+<p>DYP-ə gedin → F6 düyməsinə basın</p>
+</div>
+<p><strong>Havanı dəyişmək:</strong></p>
+<div class="code-block">
+<p>ESC düyməsinin altındakı <code>&#96;</code> düyməsinə basaraq hava seçimlərini dəyişə bilərsiniz</p>
+</div>
+</div>
+`,
+similarQuestions: [4, 6, 7]
+},
+{
+id: 6,
+number: "6",
+category: "game",
+question: "Teleport Necə Edə Bilərəm?",
+description: "Tez yer dəyişdirmək və oyunçuya teleport",
+answer: `
+<div class="space-y-4">
+<p>Serverdə teleport istifadə edərək sürətli şəkildə yer dəyişdirə bilərsiniz.</p>
+<p><strong>Məkana teleport etmək:</strong></p>
+<div class="code-block">
+<p>M → Misc Settings → Teleport Options</p>
+</div>
+<p>Teleport Options bölməsində serverdəki bütün əsas məkanları görə bilərsiniz.</p>
+<p><strong>Oyunçuya teleport etmək:</strong></p>
+<p>Qeyd: Oyunçuya teleport etmək üçün VIP statusuna sahib olmalısınız.</p>
+<div class="code-block">
+<p>M → Online Players</p>
+<p>İstədiyiniz oyunçunu seçin → Teleport to Player</p>
+</div>
+</div>
+`,
+similarQuestions: [4, 5, 7]
+},
+{
+id: 7,
+number: "7",
+category: "game",
+question: "Serverda Rul ilə sürmək, Silah Seçmək, Paltar Dəyişmək və Video Qeyd Etmək Necə Edilir?",
+description: "Rul prosesi, silah, görünüş və oyun içi qeyd",
+answer: `
+<div class="space-y-4">
+<p>
+Serverdə rul almaq, silah seçmək, paltar dəyişmək və oyun görüntülərini
+qeyd etmək üçün aşağıdakı qaydalar və menyular mövcuddur.
+</p>
+<p><strong>1 – Rul alma prosesi:</strong></p>
+<p>
+Serverdə rul almaq üçün lisenziya prosesi tətbiq olunur.
+Bunun üçün ticket açmalı və adminlərdən birinin sizinlə əlaqə saxlamasını
+səbrlə gözləməlisiniz.
+</p>
+<div class="bg-red-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-red-300 font-medium">
+Xahiş edirik: Adminləri Discord şəxsi mesaj, @mention və ya digər yollarla
+narahat etməyin. Bütün müraciətlər yalnız ticket sistemi üzərindən baxılır.
+</p>
+</div>
+<p><strong>2 – Silah seçmək:</strong></p>
+<div class="code-block">
+<p>M → Player Related Options → Weapon Options → Get All Weapons</p>
+</div>
+<p>Bu menyu vasitəsilə mövcud olan silahları seçə bilərsiniz.</p>
+<p><strong>3 – Paltar və görünüş dəyişmək:</strong></p>
+<div class="code-block">
+<p>M → Player Related Options → Player Appearance</p>
+<p>M → Player Related Options → MP Ped Customization → Save</p>
+</div>
+<p>Paltar və xarici görünüş dəyişikliklərini etdikdən sonra mütləq <strong>Save</strong> edin.</p>
+<p><strong>4 – Oyun görüntüsünü qeyd etmək (video çəkmək):</strong></p>
+<div class="code-block">
+<p>M → Recording Options → Start Recording</p>
+</div>
+<p>Qeyd olunan videoları sonradan <strong>Rockstar Editor</strong> vasitəsilə
+izləyə və eksport edə bilərsiniz.</p>
+</div>
+`,
+similarQuestions: [4, 5, 6]
+},
+{
+id: 8,
+number: "8",
+category: "game",
+question: "Olduğum Ölkədə Discord Qadağandır, Nə Edə Bilərəm?",
+description: "Discord-a alternativ giriş üsulları",
+answer: `
+<div class="space-y-4">
+<p>
+Əgər yaşadığınız ölkədə Discord-a giriş qadağandırsa, VPN istifadə etmədən
+alternativ üsullarla Discord-a daxil ola bilərsiniz.
+</p>
+<div class="bg-yellow-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-yellow-300 font-medium">
+Qeyd: VPN proqramları FiveM-də lag və crash problemlərinə səbəb ola bilər.
+Bu səbəbdən VPN istifadəsi tövsiyə olunmur.
+</p>
+</div>
+<p>
+Discord-a giriş üçün ən çox tövsiyə olunan üsullardan biri
+<strong>GoodbyeDPI</strong> proqramıdır. Bu proqram internet
+məhdudiyyətlərini aşmaq üçün yüngül və pulsuz həll təqdim edir.
+</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+<div class="bg-gray-800 p-4 rounded-lg">
+<p class="font-medium mb-2">GoodbyeDPI nədir?</p>
+<p class="text-sm text-gray-400">
+Məhdudlaşdırılmış sayt və servislərə giriş imkanı verən,
+pulsuz və yüngül proqramdır.
+</p>
+</div>
+<div class="bg-gray-800 p-4 rounded-lg">
+<p class="font-medium mb-2">VPN ilə müqayisə</p>
+<p class="text-sm text-gray-400">
+GoodbyeDPI VPN-dən fərqli olaraq internet sürətini azaldmır
+və oyun zamanı daha stabil işləyir.
+</p>
+</div>
+<div class="bg-gray-800 p-4 rounded-lg">
+<p class="font-medium mb-2">FiveM ilə uyğunluq</p>
+<p class="text-sm text-gray-400">
+VPN-lər FiveM-də crash yarada bilər, GoodbyeDPI isə
+oyun performansına təsir etmir.
+</p>
+</div>
+</div>
+<div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-green-300 font-medium">
+GoodbyeDPI aktiv edildikdən sonra Discord-u açaraq
+serverlərə problemsiz şəkildə qoşula bilərsiniz.
+</p>
+</div>
+</div>
+`,
+similarQuestions: [3, 11, 12]
+},
+{
+id: 9,
+number: "9",
+category: "game",
+question: "Maşın Tam Yüklənmir, Nə Edə Bilərəm?",
+description: "Maşın yüklənmə problemləri",
+answer: `
+<div class="space-y-4">
+<p>Əgər maşının yarısı görünür, yarısı görünmürsə:</p>
+<div class="code-block">
+<p>1. vMenu-də (M düyməsi) Vehicle Options bölməsinə daxil olun</p>
+<p>2. "Left Wing" ayarını tapın və aktiv edin</p>
+</div>
+<div class="bg-yellow-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-yellow-300">Əgər problem davam edirsə, bu maşın modunun özündə olan bir xətadan qaynaqlana bilər. Xahiş olunur, bu problemi server admin heyətinə bildirin.</p>
+</div>
+</div>
+`,
+similarQuestions: [4, 10, 11]
+},
+{
+id: 10,
+number: "10",
+category: "game",
+question: "Maşın / Xəritə (Map) Yüklənmir, Nə Etməliyəm?",
+description: "Yüklənmə problemləri",
+answer: `
+<div class="space-y-4">
+<p><strong>Ola biləcək səbəblər:</strong></p>
+<ul class="list-disc pl-5 space-y-1">
+<li>İnternet sürətinizin aşağı olması (ən az 20 Mbps)</li>
+<li>Olduğunuz ərazidə çox sayda yüklənəcək obyekt olması</li>
+<li>Sistemin modlarla işləmək üçün kifayət etməməsi</li>
+<li>Serverin çox məşğul olması</li>
+</ul>
+<p><strong>Həll yolları:</strong></p>
+<div class="code-block">
+<p>1. Bir müddət gözləyin</p>
+<p>2. FiveM cache təmizləyin</p>
+<p>3. Serverdan çıxıb yenidən daxil olun</p>
+</div>
+<p><strong>Xəritə yüklənmirsə – alternativ həll:</strong></p>
+<div class="code-block">
+ESC → Settings → Graphics → Extended Texture Budget
+</div>
+<p>Bu parametrin dəyərini təxminən iki dəfə artırın.</p>
+</div>
+`,
+similarQuestions: [2, 9, 11]
+},
+{
+id: 11,
+number: "11",
+category: "problems",
+question: "Davamlı Olaraq Crash Yeyirəm və Bu Yalnız Sizin Serverinizdə Baş Verir?",
+description: "Crash və stabil olmayan oyun problemləri",
+answer: `
+<div class="space-y-4">
+<div class="bg-red-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-red-300 font-medium">Server Tərəfində Problem YOXDUR</p>
+<p>
+Yaşadığınız crash problemi serverimizdən qaynaqlanmır.
+Server tərəfində hər hansı bir xəta və ya crash qeydi mövcud deyil.
+</p>
+</div>
+<p><strong>Bu tip crash problemləri adətən aşağıdakı səbəblərdən yaranır:</strong></p>
+<ul class="list-disc pl-5 space-y-1">
+<li>Oyunçunun şəxsi kompüteri və sistem problemləri</li>
+<li>İstifadə olunan mod, cheat və ya arxa planda işləyən proqramlar</li>
+<li>FiveM yeniləmələrindən sonra yaranan uyğunsuzluqlar</li>
+<li>GTA V fayllarının zədələnməsi</li>
+</ul>
+<p><strong>Tövsiyə olunan həll yolları:</strong></p>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+<div class="bg-gray-800 p-3 rounded text-sm">Cheat / mod proqramlarını tam silin</div>
+<div class="bg-gray-800 p-3 rounded text-sm">FiveM cache təmizləyin</div>
+<div class="bg-gray-800 p-3 rounded text-sm">FiveM hard reset edin</div>
+<div class="bg-gray-800 p-3 rounded text-sm">GTA V fayllarını verify edin</div>
+<div class="bg-gray-800 p-3 rounded text-sm">Windows və driverləri yeniləyin</div>
+<div class="bg-gray-800 p-3 rounded text-sm">Aldığınız xətanı Google-da axtarın</div>
+</div>
+<div class="bg-red-900 bg-opacity-20 p-4 rounded-lg mt-4">
+<p class="font-medium">
+QEYD: Əgər problem serverdən qaynaqlansaydı,
+bütün oyunçular eyni anda crash problemi yaşayardı.
+Bu səbəbdən problem fərdi (client-side) hesab olunur.
+</p>
+</div>
+</div>
+`,
+similarQuestions: [1, 2, 10]
+},
+{
+id: 12,
+number: "12",
+category: "problems",
+question: "vMenu-də Qeyd Edilmiş Məzmunları Necə Ehtiyatda Saxlaya Bilərəm?",
+description: "vMenu məlumatlarının qorunması və bərpası",
+answer: `
+<div class="space-y-4">
+<p>
+Bu üsul FiveM-i sıfırlayacaq, yenidən quracaq və ya kompüterinə format
+atacaq oyunçular üçün vMenu ayarlarını və yadda saxlanılan məlumatları
+qorumağa kömək edir.
+</p>
+<p><strong>Ehtiyat nüsxəsi (Backup) yaratmaq:</strong></p>
+<div class="code-block">
+<p>1. Windows + R düymələrinə basın</p>
+<p>2. %appdata% yazın və Enter basın</p>
+<p>3. CitizenFX qovluğunu tapın</p>
+<p>4. kvs qovluğunu kopyalayın</p>
+<p>5. Təhlükəsiz bir yerə (Desktop, USB və s.) yapışdırın</p>
+</div>
+<p><strong>Ehtiyat nüsxəni geri yükləmək:</strong></p>
+<div class="code-block">
+<p>1. FiveM-i sıfırladıqdan və ya yenidən quraşdırdıqdan sonra</p>
+<p>2. Yenidən Windows + R → %appdata%</p>
+<p>3. CitizenFX qovluğuna daxil olun</p>
+<p>4. Saxladığınız kvs qovluğunu buraya geri kopyalayın</p>
+</div>
+<div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-green-300 font-medium">
+✅ Əməliyyat tamamlandı. İndi FiveM-ə daxil olaraq
+vMenu ayarlarınızı əvvəlki kimi istifadə edə bilərsiniz.
+</p>
+</div>
+</div>
+`,
+similarQuestions: [1, 2, 3]
+},
+{
+id: 13,
+number: "13",
+category: "problems",
+question: "VIP tələb olunan xətanı alıram, bu nədir?",
+description: "VIP olmayan oyunçular üçün məhdudiyyət xətası",
+answer: `
+<div class="space-y-6">
+<div class="bg-red-900 bg-opacity-20 border border-red-700 rounded-xl p-5">
+<h3 class="text-lg font-bold text-red-400 mb-2">Xəta nümünəsi</h3>
+<p class="text-gray-300">
+Əgər bu xətanı görürsünüzsə, istifadə etdiyiniz funksiya
+<strong class="text-red-400">yalnız VIP oyunçular</strong> üçün açıqdır.
+</p>
+</div>
+<div class="flex justify-center">
+<div class="bg-black bg-opacity-40 p-4 rounded-xl">
+<img src="./xeta.png" alt="VIP Error" class="w-[420px] max-w-full rounded-xl object-contain border border-gray-700 shadow-lg">
+</div>
+</div>
+<div class="bg-yellow-900 bg-opacity-20 border border-yellow-700 rounded-xl p-5">
+<p class="text-yellow-300 font-medium">
+Bu xəta server tərəfindən qoyulmuş VIP məhdudiyyətinə görə çıxır.
+</p>
+<p class="text-gray-300 mt-2">
+Problemin aradan qalxması üçün VIP status almalısınız.
+</p>
+</div>
+<div class="bg-gray-800 bg-opacity-40 rounded-xl p-5">
+<h3 class="text-lg font-bold text-white mb-3">VIP necə ala bilərəm?</h3>
+<ul class="list-disc list-inside text-gray-300 space-y-1">
+<li>Discord serverimizə daxil olun</li>
+<li>VIP məlumatları olan kanala baxın</li>
+<li>Ticket açaraq müraciət edin</li>
+</ul>
+</div>
+</div>
+`,
+similarQuestions: [6, 7]
+},
+{
+id: 14,
+number: "14",
+category: "game",
+question: "Donate məlumatlarını haradan və necə öyrənə bilərəm?",
+description: "VIP, maşınlar, ymap, qrafik paketləri və digər donate məlumatları",
+answer: `
+<div class="space-y-6">
+<p class="text-gray-300">
+Serverimizdə mövcud olan <strong>VIP paketləri</strong>,
+<strong>xüsusi maşınlar</strong>, <strong>ymap / mlo</strong>,
+<strong>qrafik paketləri</strong> və digər bütün donate məlumatlarını
+Discord serverimizdə yerləşən xüsusi kanallardan öyrənə bilərsiniz.
+</p>
 
-  }, 500);
+<div class="flex justify-center">
+<div class="bg-black bg-opacity-40 p-4 rounded-xl">
+<img
+src="./discord.png"
+alt="Donate Discord Kanalları"
+class="w-[420px] max-w-full rounded-xl object-contain border border-gray-700 shadow-lg"
+>
+</div>
+</div>
+
+<div class="bg-gray-800 bg-opacity-50 rounded-xl p-5">
+<h3 class="text-lg font-bold text-white mb-3">Donate kanalları</h3>
+<ul class="list-disc list-inside text-gray-300 space-y-1">
+<li><strong>#donate-məlumatları</strong> – ümumi donate açıqlamaları</li>
+<li><strong>#vip-status</strong> – VIP paketləri və üstünlükləri</li>
+<li><strong>#vip-maşınlar</strong> – VIP üçün xüsusi maşınlar</li>
+<li><strong>#özəl-maşınlar</strong> – fərdi və limitli maşınlar</li>
+<li><strong>#ymap-mlo</strong> – ymap və mlo paketləri</li>
+<li><strong>#qrafik-paketi</strong> – vizual və qrafik əlavələr</li>
+<li><strong>#gta5-cd</strong> / <strong>#kofe-al</strong> – dəstək və ödəniş</li>
+</ul>
+</div>
+
+<div class="bg-yellow-900 bg-opacity-20 border border-yellow-700 rounded-xl p-5">
+<p class="text-yellow-300 font-medium">Qeyd</p>
+<p class="text-gray-300 mt-2">
+Əgər sualınızın cavabını yuxarıda qeyd olunan kanalların heç birində
+tapa bilməmisinizsə, narahat olmayın.
+</p>
+</div>
+
+<div class="bg-green-900 bg-opacity-20 border border-green-700 rounded-xl p-5">
+<p class="text-green-300 font-medium">Alternativ kömək yolu</p>
+<p class="text-gray-300 mt-2">
+Discord serverimizdə <strong>ticket açaraq</strong> və ya
+<strong>heyət üzvlərimizdən biri ilə əlaqə saxlayaraq</strong>
+donate mövzuları ilə bağlı ətraflı və dəqiq məlumat ala bilərsiniz.
+</p>
+</div>
+
+<div class="bg-gray-800 bg-opacity-40 rounded-xl p-5">
+<p class="text-gray-300">
+⚠️ Xahiş olunur, donate ilə bağlı suallar üçün heyət üzvlərini
+şəxsi mesajla narahat etməyin.
+Bütün müraciətlər yalnız <strong>Discord kanalları</strong>
+və ya <strong>ticket sistemi</strong> üzərindən cavablandırılır.
+</p>
+</div>
+</div>
+`,
+similarQuestions: [13]
+}
+];
+
+// Sayfa yükləndikdə işləyəcək funksiyalar
+document.addEventListener('DOMContentLoaded', function() {
+// Tema yüklə
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'light') {
+document.body.classList.add('light-mode');
+document.getElementById('themeToggle').querySelector('i').classList.remove('fa-moon');
+document.getElementById('themeToggle').querySelector('i').classList.add('fa-sun');
+document.getElementById('themeToggle').querySelector('i').classList.remove('text-yellow-300');
+document.getElementById('themeToggle').querySelector('i').classList.add('text-yellow-500');
+}
+
+// Mobile menu toggle
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+mobileMenuBtn.addEventListener('click', function() {
+sidebar.classList.toggle('active');
+sidebarOverlay.classList.toggle('active');
 });
 
-        
-        if (enterSiteBtn && welcomeOverlay && musicSelectionOverlay) {
-          enterSiteBtn.addEventListener('click', function() {
-            // Welcome ekranını gizlə və musiqi seçim ekranını göstər
-            welcomeOverlay.classList.add('opacity-0');
-            setTimeout(() => {
-              welcomeOverlay.style.display = 'none';
-              musicSelectionOverlay.classList.add('active');
-              body.classList.remove('welcome-active');
-            }, 500);
-          });
-        } else {
-          // Welcome overlay yoxdursa, dərhal FAQ sistemini başlat
-          initializeFAQSystem();
-          initializeVolumeControls();
-        }
-      });
+sidebarOverlay.addEventListener('click', function() {
+sidebar.classList.remove('active');
+sidebarOverlay.classList.remove('active');
+});
 
-      // Preview audio-larını başlat
-      function initializeAudioPreviews() {
-        const musicCards = document.querySelectorAll('.music-track-card');
-        
-        // Hər bir musiqi kartına klik olunduqda
-        musicCards.forEach(card => {
-          card.addEventListener('click', function() {
-            const trackId = parseInt(this.getAttribute('data-track'));
-            
-            // Aktif kartı dəyişdir
-            musicCards.forEach(c => {
-              c.classList.remove('active');
-              c.querySelector('.track-icon')?.remove();
-            });
-            
-            this.classList.add('active');
-            
-            // Təsdiq ikonu əlavə et
-            const iconDiv = document.createElement('div');
-            iconDiv.className = 'track-icon';
-            iconDiv.innerHTML = '<i class="fas fa-check-circle"></i>';
-            this.appendChild(iconDiv);
-            
-            // Seçilən musiqi id-ni saxla
-            this.setAttribute('data-selected', 'true');
-          });
-        });
-        
-        // Select musiqi button
-        const selectMusicBtn = document.getElementById('selectMusicBtn');
-        const musicSelectionOverlay = document.getElementById('musicSelectionOverlay');
-        
-        selectMusicBtn.addEventListener('click', function() {
-          // Seçilən musiqi kartını tap
-          const activeCard = document.querySelector('.music-track-card.active');
-          if (activeCard) {
-            const trackId = parseInt(activeCard.getAttribute('data-track'));
-            const selectedTrack = musicTracks[trackId];
-            
-            // Seçilən musiqini localStorage-də saxla
-            localStorage.setItem('selectedMusic', JSON.stringify(selectedTrack));
-            
-            // Musiqi seçim ekranını bağla
-            musicSelectionOverlay.classList.remove('active');
-            
-            // FAQ sistemini başlat və seçilən musiqini oynat
-            initializeFAQSystem();
-            initializeVolumeControls();
-            playSelectedMusic(selectedTrack);
-          } else {
-            alert('Zəhmət olmasa, bir musiqi seçin!');
-          }
-        });
-      }
+// Tema dəyişmə
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = themeToggle.querySelector('i');
+themeToggle.addEventListener('click', function() {
+const body = document.body;
+if (body.classList.contains('light-mode')) {
+body.classList.remove('light-mode');
+localStorage.setItem('theme', 'dark');
+themeIcon.classList.remove('fa-sun');
+themeIcon.classList.add('fa-moon');
+themeIcon.classList.remove('text-yellow-500');
+themeIcon.classList.add('text-yellow-300');
+} else {
+body.classList.add('light-mode');
+localStorage.setItem('theme', 'light');
+themeIcon.classList.remove('fa-moon');
+themeIcon.classList.add('fa-sun');
+themeIcon.classList.remove('text-yellow-300');
+themeIcon.classList.add('text-yellow-500');
+}
+});
 
-      // Seçilən musiqini oynat
-      function playSelectedMusic(track) {
-        const audio = document.getElementById('bgMusic');
-        if (audio && track) {
-          audio.src = track.file;
-          audio.load();
-          audio.volume = 0.35;
-          
-          const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            playPromise.then(() => {
-              console.log(`${track.name} musiqi başladı!`);
-            }).catch(error => {
-              console.log("Musiqi başlatma xətası:", error);
-            });
-          }
-        }
-      }
+// Welcome button
+const enterSiteBtn = document.getElementById('enterSiteBtn');
+const welcomeOverlay = document.getElementById('welcomeOverlay');
+const musicSelectionOverlay = document.getElementById('musicSelectionOverlay');
+const body = document.body;
 
-      // FAQ sistemini başlat
-      function initializeFAQSystem() {
-        console.log("FAQ sistemi başladı...");
-        
-        // Seçilən musiqini yüklə
-        const savedTrack = localStorage.getItem('selectedMusic');
-        if (savedTrack) {
-          try {
-            const track = JSON.parse(savedTrack);
-            playSelectedMusic(track);
-          } catch (e) {
-            console.log("Musiqi yükləmə xətası:", e);
-          }
-        }
-        
-        // Sidebar'daki açılır-kapanır bölümü yönet
-        const allQuestionsCollapsible = document.getElementById('allQuestionsCollapsible');
-        const collapsibleHeader = allQuestionsCollapsible.querySelector('.sidebar-collapsible-header');
-        
-        collapsibleHeader.addEventListener('click', function() {
-          allQuestionsCollapsible.classList.toggle('active');
-        });
-        
-        // Populate questions list in sidebar
-        const questionsList = document.getElementById('questionsList');
-        faqData.forEach(faq => {
-          const questionItem = document.createElement('a');
-          questionItem.href = `#q${faq.id}`;
-          questionItem.className = 'sidebar-item text-sm';
-          questionItem.setAttribute('data-question', faq.id);
-          questionItem.innerHTML = `
-            <div class="question-number mr-3">${faq.number}</div>
-            <span class="truncate">${faq.question}</span>
-          `;
-          questionItem.addEventListener('click', function(e) {
-            e.preventDefault();
-            const questionId = this.getAttribute('data-question');
-            
-            // Show all section
-            showSection('all');
-            
-            // Update active sidebar item
-            document.querySelectorAll('.sidebar-item[data-section]').forEach(nav => {
-              nav.classList.remove('active');
-            });
-            document.querySelector('.sidebar-item[data-section="all"]').classList.add('active');
-            
-            // Scroll to question and open it
-            setTimeout(() => {
-              const questionElement = document.getElementById('q' + questionId);
-              if (questionElement) {
-                // Bu sualı açırıq
-                if (!questionElement.classList.contains('active')) {
-                  questionElement.classList.add('active');
-                }
-                
-                // Scroll edirik
-                questionElement.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start'
-                });
-              }
-            }, 100);
-            
-            // Close sidebar on mobile
-            if (window.innerWidth <= 1024) {
-              document.getElementById('sidebar').classList.remove('active');
-              document.getElementById('sidebarOverlay').classList.remove('active');
-            }
-          });
-          questionsList.appendChild(questionItem);
-        });
-        
-        // Populate all questions container
-        const allContainer = document.getElementById('all-questions-container');
-        faqData.forEach(faq => {
-          allContainer.appendChild(createFAQElement(faq));
-        });
-        
-        // Populate category containers
-        populateCategoryContainers();
-        
-        // Sidebar item click handlers
-        document.querySelectorAll('.sidebar-item[data-section]').forEach(item => {
-          item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const section = this.getAttribute('data-section');
-            
-            // Update active sidebar item
-            document.querySelectorAll('.sidebar-item[data-section]').forEach(nav => {
-              nav.classList.remove('active');
-            });
-            this.classList.add('active');
-            
-            // Show the selected section
-            showSection(section);
-            
-            // Close sidebar on mobile
-            const sidebar = document.getElementById('sidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
-            if (window.innerWidth <= 1024) {
-              sidebar.classList.remove('active');
-              sidebarOverlay.classList.remove('active');
-            }
-          });
-        });
-        
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-          searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            if (searchTerm === '') {
-              document.querySelectorAll('.faq-item').forEach(faq => {
-                faq.style.display = 'block';
-              });
-              const noResults = document.querySelector('.no-results');
-              if (noResults) noResults.remove();
-              return;
-            }
-            
-            let foundResults = false;
-            const activeSection = document.querySelector('.content-section.active');
-            
-            if (activeSection) {
-              const faqItems = activeSection.querySelectorAll('.faq-item');
-              faqItems.forEach(faq => {
-                const questionText = faq.querySelector('.faq-question h3')?.textContent.toLowerCase() || '';
-                const questionDesc = faq.querySelector('.faq-question .text-gray-500')?.textContent.toLowerCase() || '';
-                const answerText = faq.querySelector('.faq-answer')?.textContent.toLowerCase() || '';
-                
-                if (questionText.includes(searchTerm) || questionDesc.includes(searchTerm) || answerText.includes(searchTerm)) {
-                  faq.style.display = 'block';
-                  foundResults = true;
-                } else {
-                  faq.style.display = 'none';
-                }
-              });
-            }
-            
-            const container = document.querySelector('.content-section.active');
-            let noResults = container.querySelector('.no-results');
-            if (!foundResults && container) {
-              if (!noResults) {
-                noResults = document.createElement('div');
-                noResults.className = 'no-results';
-                noResults.innerHTML = `
-                  <div class="text-center py-12">
-                    <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4">
-                      <i class="fas fa-search text-gray-400 text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">"${searchTerm}" mövzusunda sual tapılmadı</h3>
-                    <p class="text-gray-400 mb-4">Axtardığınız mövzu ilə bağlı sual tapılmadı.</p>
-                    <a href="https://discord.gg/fivemaze" target="_blank" class="inline-flex items-center text-red-400 hover:text-red-300">
-                      <i class="fab fa-discord mr-2"></i>
-                      <span>Discordda heyətdən soruşa bilərsiniz</span>
-                    </a>
-                  </div>
-                `;
-                container.appendChild(noResults);
-              }
-            } else if (noResults) {
-              noResults.remove();
-            }
-            
-            if (foundResults && !document.getElementById('all-section').classList.contains('active')) {
-              showSection('all');
-            }
-          });
-        }
-        
-        // Music selection initialization
-        initializeAudioPreviews();
-      }
+if (enterSiteBtn && welcomeOverlay && musicSelectionOverlay) {
+enterSiteBtn.addEventListener('click', function() {
+welcomeOverlay.classList.add('opacity-0');
+setTimeout(() => {
+welcomeOverlay.style.display = 'none';
+musicSelectionOverlay.classList.add('active');
+body.classList.remove('welcome-active');
+initializeAudioPreviews();
+}, 500);
+});
+}
+// Staff sidebar'ı başlat
+initializeStaffSidebar();
+initializeFAQSystem(); // ✅ FAQ SISTEMI BURADA BAŞLAMALIDIR
+});
 
-      // Create FAQ element without copy button and similar questions
-      function createFAQElement(faq) {
-        const faqElement = document.createElement('div');
-        faqElement.className = 'faq-item glass-card rounded-lg mb-6';
-        faqElement.id = `q${faq.id}`;
-        
-        faqElement.innerHTML = `
-          <div class="faq-question">
-            <div class="flex items-center">
-              <div class="question-number mr-4">${faq.number}</div>
-              <div>
-                <h3 class="font-bold">${faq.question}</h3>
-                <p class="text-sm text-gray-500 mt-1">${faq.description}</p>
-              </div>
-            </div>
-            <div class="faq-toggle">
-              <i class="fas fa-chevron-down text-gray-400"></i>
-            </div>
-          </div>
-          <div class="faq-answer">
-            ${faq.answer}
-            
-            <!-- Fallback Message -->
-            <div class="fallback-message">
-              <div class="flex items-center">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>Əgər bu cavab kömək etmədisə → ticket açın.</span>
-              </div>
-            </div>
-          </div>
-        `;
-        
-        // Açma/bağlama funksiyası
-        faqElement.querySelector('.faq-question').addEventListener('click', function() {
-          const isActive = faqElement.classList.contains('active');
-          
-          if (isActive) {
-            faqElement.classList.remove('active');
-          } else {
-            faqElement.classList.add('active');
-          }
-        });
-        
-        return faqElement;
-      }
+// Staff sidebar'ını başlat
+function initializeStaffSidebar() {
+const staffList = document.getElementById('staffMembersList');
 
-      // Helper function to extract text from HTML
-      function extractTextFromHTML(html) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        
-        // Remove code blocks and format them
-        const codeBlocks = tempDiv.querySelectorAll('.code-block');
-        codeBlocks.forEach(block => {
-          const lines = block.textContent.split('\n').map(line => line.trim()).filter(line => line);
-          block.textContent = lines.join('\n');
-        });
-        
-        // Remove empty elements and format
-        const elements = tempDiv.querySelectorAll('*');
-        elements.forEach(el => {
-          if (el.tagName === 'DIV' && !el.textContent.trim()) {
-            el.remove();
-          }
-        });
-        
-        return tempDiv.textContent
-          .replace(/\n\s*\n/g, '\n\n') // Remove extra blank lines
-          .trim();
-      }
+staffData.forEach(staff => {
+const staffElement = document.createElement('div');
+staffElement.className = `staff-member ${staff.type}`;
 
-      // Populate category containers
-      function populateCategoryContainers() {
-        // Technical questions
-        const technicalContainer = document.getElementById('technical-questions-container');
-        faqData.filter(faq => faq.category === 'technical').forEach(faq => {
-          technicalContainer.appendChild(createFAQElement(faq));
-        });
-        
-        // Game questions
-        const gameContainer = document.getElementById('game-questions-container');
-        faqData.filter(faq => faq.category === 'game').forEach(faq => {
-          gameContainer.appendChild(createFAQElement(faq));
-        });
-        
-        // Problems questions
-        const problemsContainer = document.getElementById('problems-questions-container');
-        faqData.filter(faq => faq.category === 'problems').forEach(faq => {
-          problemsContainer.appendChild(createFAQElement(faq));
-        });
-      }
+// Avatar görseli kontrolü
+const avatarSrc = staff.image || './default-avatar.png';
 
-      // Show section
-      function showSection(section) {
-        document.querySelectorAll('.content-section').forEach(content => {
-          content.classList.remove('active');
-        });
-        
-        document.getElementById(section + '-section').classList.add('active');
-        
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-          searchInput.value = '';
-          document.querySelectorAll('.faq-item').forEach(faq => {
-            faq.style.display = 'block';
-          });
-          
-          const noResults = document.querySelector('.no-results');
-          if (noResults) noResults.remove();
-        }
-      }
+staffElement.innerHTML = `
+<img src="${avatarSrc}" alt="${staff.name}" class="staff-avatar-sidebar" onerror="this.src='./default-avatar.png'">
+<div class="staff-info">
+<div class="staff-name">${staff.name}</div>
+<div class="staff-role">${staff.role}</div>
+</div>
+`;
 
-      // Səs idarəetmə sistemini başlat
-      function initializeVolumeControls() {
-        const audio = document.getElementById('bgMusic');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const muteBtn = document.getElementById('muteBtn');
-        const volumeIcon = document.getElementById('volumeIcon');
-        const volumeTooltip = document.getElementById('volumeTooltip');
-        
-        if (!audio || !volumeSlider) return;
-        
-        // Tooltip göstərmə funksiyası
-        function updateVolumeTooltip(value) {
-          volumeTooltip.textContent = `${value}%`;
-          volumeTooltip.style.opacity = '1';
-          setTimeout(() => {
-            volumeTooltip.style.opacity = '0';
-          }, 1000);
-        }
-        
-        // Səs panelini göstər
-        document.querySelector('.volume-controls').style.display = 'block';
-        
-        // Slider dəyişdikdə
-        volumeSlider.addEventListener('input', function() {
-          const volumeValue = this.value / 100;
-          audio.volume = volumeValue;
-          audio.muted = false;
-          
-          // İkonu yenilə
-          if (volumeValue === 0) {
-            volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down');
-            volumeIcon.classList.add('fa-volume-mute');
-          } else if (volumeValue < 0.5) {
-            volumeIcon.classList.remove('fa-volume-up', 'fa-volume-mute');
-            volumeIcon.classList.add('fa-volume-down');
-          } else {
-            volumeIcon.classList.remove('fa-volume-down', 'fa-volume-mute');
-            volumeIcon.classList.add('fa-volume-up');
-          }
-          
-          updateVolumeTooltip(this.value);
-          localStorage.setItem('bgMusicVolume', this.value);
-          localStorage.setItem('bgMusicMuted', 'false');
-        });
-        
-        // Mute/unmute düyməsi
-        muteBtn.addEventListener('click', function() {
-          if (audio.muted) {
-            audio.muted = false;
-            volumeIcon.classList.remove('fa-volume-mute');
-            
-            if (audio.volume === 0) {
-              audio.volume = 0.35;
-              volumeSlider.value = 35;
-              volumeIcon.classList.add('fa-volume-down');
-            } else if (audio.volume < 0.5) {
-              volumeIcon.classList.add('fa-volume-down');
-            } else {
-              volumeIcon.classList.add('fa-volume-up');
-            }
-            
-            updateVolumeTooltip(volumeSlider.value);
-          } else {
-            audio.muted = true;
-            volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down');
-            volumeIcon.classList.add('fa-volume-mute');
-            volumeTooltip.textContent = "Səs söndürüldü";
-            volumeTooltip.style.opacity = '1';
-            setTimeout(() => {
-              volumeTooltip.style.opacity = '0';
-            }, 1000);
-          }
-          
-          localStorage.setItem('bgMusicMuted', audio.muted);
-        });
-        
-        // Slider üzərində hover zamanı tooltip göstər
-        volumeSlider.addEventListener('mouseenter', function() {
-          volumeTooltip.style.opacity = '1';
-        });
-        
-        volumeSlider.addEventListener('mouseleave', function() {
-          setTimeout(() => {
-            volumeTooltip.style.opacity = '0';
-          }, 500);
-        });
-        
-        // LocalStorage-dan ayarları yüklə
-        const savedVolume = localStorage.getItem('bgMusicVolume');
-        if (savedVolume) {
-          audio.volume = savedVolume / 100;
-          volumeSlider.value = savedVolume;
-        }
-        
-        const savedMuted = localStorage.getItem('bgMusicMuted');
-        if (savedMuted === 'true') {
-          audio.muted = true;
-          volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down');
-          volumeIcon.classList.add('fa-volume-mute');
-        }
-      }
-    </script>
-  </body>
+staffList.appendChild(staffElement);
+});
+
+// Heyet komandası açılır-kapanır bölümü
+const staffCollapsible = document.getElementById('staffCollapsible');
+const staffCollapsibleHeader = staffCollapsible.querySelector('.sidebar-collapsible-header');
+
+staffCollapsibleHeader.onclick = () => {
+staffCollapsible.classList.toggle('active');
+};
+
+}
+
+// Preview audio-larını başlat
+function initializeAudioPreviews() {
+const musicCards = document.querySelectorAll('.music-track-card');
+
+musicCards.forEach(card => {
+card.addEventListener('click', function() {
+const trackId = parseInt(this.getAttribute('data-track'));
+
+musicCards.forEach(c => {
+c.classList.remove('active');
+c.querySelector('.track-icon')?.remove();
+});
+
+this.classList.add('active');
+
+const iconDiv = document.createElement('div');
+iconDiv.className = 'track-icon';
+iconDiv.innerHTML = '<i class="fas fa-check-circle"></i>';
+this.appendChild(iconDiv);
+
+this.setAttribute('data-selected', 'true');
+});
+});
+
+const selectMusicBtn = document.getElementById('selectMusicBtn');
+const musicSelectionOverlay = document.getElementById('musicSelectionOverlay');
+
+selectMusicBtn.addEventListener('click', function() {
+const activeCard = document.querySelector('.music-track-card.active');
+if (activeCard) {
+const trackId = parseInt(activeCard.getAttribute('data-track'));
+const selectedTrack = musicTracks[trackId];
+
+localStorage.setItem('selectedMusic', JSON.stringify(selectedTrack));
+
+musicSelectionOverlay.classList.remove('active');
+
+initializeVolumeControls();
+playSelectedMusic(selectedTrack);
+} else {
+alert('Zəhmət olmasa, bir musiqi seçin!');
+}
+});
+}
+
+// Seçilən musiqini oynat
+function playSelectedMusic(track) {
+const audio = document.getElementById('bgMusic');
+if (audio && track) {
+audio.src = track.file;
+audio.load();
+audio.volume = 0.35;
+
+const playPromise = audio.play();
+if (playPromise !== undefined) {
+playPromise.then(() => {
+console.log(`${track.name} musiqi başladı!`);
+}).catch(error => {
+console.log("Musiqi başlatma xətası:", error);
+});
+}
+}
+}
+
+// FAQ sistemini başlat
+function initializeFAQSystem() {
+console.log("FAQ sistemi başladı...");
+
+const savedTrack = localStorage.getItem('selectedMusic');
+if (savedTrack) {
+try {
+const track = JSON.parse(savedTrack);
+playSelectedMusic(track);
+} catch (e) {
+console.log("Musiqi yükləmə xətası:", e);
+}
+}
+
+const allQuestionsCollapsible = document.getElementById('allQuestionsCollapsible');
+const collapsibleHeader = allQuestionsCollapsible.querySelector('.sidebar-collapsible-header');
+
+collapsibleHeader.addEventListener('click', function() {
+allQuestionsCollapsible.classList.toggle('active');
+});
+
+const questionsList = document.getElementById('questionsList');
+faqData.forEach(faq => {
+const questionItem = document.createElement('a');
+questionItem.href = `#q${faq.id}`;
+questionItem.className = 'sidebar-item text-sm';
+questionItem.setAttribute('data-question', faq.id);
+questionItem.innerHTML = `
+<div class="question-number mr-3">${faq.number}</div>
+<span class="truncate">${faq.question}</span>
+`;
+questionItem.addEventListener('click', function(e) {
+e.preventDefault();
+const questionId = this.getAttribute('data-question');
+
+showSection('all');
+
+document.querySelectorAll('.sidebar-item[data-section]').forEach(nav => {
+nav.classList.remove('active');
+});
+document.querySelector('.sidebar-item[data-section="all"]').classList.add('active');
+
+setTimeout(() => {
+const questionElement = document.getElementById('q' + questionId);
+if (questionElement) {
+if (!questionElement.classList.contains('active')) {
+questionElement.classList.add('active');
+}
+
+questionElement.scrollIntoView({
+behavior: 'smooth',
+block: 'start'
+});
+}
+}, 100);
+
+if (window.innerWidth <= 1024) {
+document.getElementById('sidebar').classList.remove('active');
+document.getElementById('sidebarOverlay').classList.remove('active');
+}
+});
+questionsList.appendChild(questionItem);
+});
+
+const allContainer = document.getElementById('all-questions-container');
+faqData.forEach(faq => {
+allContainer.appendChild(createFAQElement(faq));
+});
+
+populateCategoryContainers();
+
+document.querySelectorAll('.sidebar-item[data-section]').forEach(item => {
+item.addEventListener('click', function(e) {
+e.preventDefault();
+const section = this.getAttribute('data-section');
+
+document.querySelectorAll('.sidebar-item[data-section]').forEach(nav => {
+nav.classList.remove('active');
+});
+this.classList.add('active');
+
+showSection(section);
+
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+if (window.innerWidth <= 1024) {
+sidebar.classList.remove('active');
+sidebarOverlay.classList.remove('active');
+}
+});
+});
+
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+searchInput.addEventListener('input', function() {
+const searchTerm = this.value.toLowerCase().trim();
+if (searchTerm === '') {
+document.querySelectorAll('.faq-item').forEach(faq => {
+faq.style.display = 'block';
+});
+const noResults = document.querySelector('.no-results');
+if (noResults) noResults.remove();
+return;
+}
+
+let foundResults = false;
+const activeSection = document.querySelector('.content-section.active');
+
+if (activeSection) {
+const faqItems = activeSection.querySelectorAll('.faq-item');
+faqItems.forEach(faq => {
+const questionText = faq.querySelector('.faq-question h3')?.textContent.toLowerCase() || '';
+const questionDesc = faq.querySelector('.faq-question .text-gray-500')?.textContent.toLowerCase() || '';
+const answerText = faq.querySelector('.faq-answer')?.textContent.toLowerCase() || '';
+
+if (questionText.includes(searchTerm) || questionDesc.includes(searchTerm) || answerText.includes(searchTerm)) {
+faq.style.display = 'block';
+foundResults = true;
+} else {
+faq.style.display = 'none';
+}
+});
+}
+
+const container = document.querySelector('.content-section.active');
+let noResults = container.querySelector('.no-results');
+if (!foundResults && container) {
+if (!noResults) {
+noResults = document.createElement('div');
+noResults.className = 'no-results';
+noResults.innerHTML = `
+<div class="text-center py-12">
+<div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4">
+<i class="fas fa-search text-gray-400 text-2xl"></i>
+</div>
+<h3 class="text-lg font-bold mb-2">"${searchTerm}" mövzusunda sual tapılmadı</h3>
+<p class="text-gray-400 mb-4">Axtardığınız mövzu ilə bağlı sual tapılmadı.</p>
+<a href="https://discord.gg/fivemaze" target="_blank" class="inline-flex items-center text-red-400 hover:text-red-300">
+<i class="fab fa-discord mr-2"></i>
+<span>Discordda heyətdən soruşa bilərsiniz</span>
+</a>
+</div>
+`;
+container.appendChild(noResults);
+}
+} else if (noResults) {
+noResults.remove();
+}
+
+if (foundResults && !document.getElementById('all-section').classList.contains('active')) {
+showSection('all');
+}
+});
+}
+}
+
+// Create FAQ element
+function createFAQElement(faq) {
+const faqElement = document.createElement('div');
+faqElement.className = 'faq-item glass-card rounded-lg mb-6';
+faqElement.id = `q${faq.id}`;
+
+faqElement.innerHTML = `
+<div class="faq-question">
+<div class="flex items-center">
+<div class="question-number mr-4">${faq.number}</div>
+<div>
+<h3 class="font-bold">${faq.question}</h3>
+<p class="text-sm text-gray-500 mt-1">${faq.description}</p>
+</div>
+</div>
+<div class="faq-toggle">
+<i class="fas fa-chevron-down text-gray-400"></i>
+</div>
+</div>
+<div class="faq-answer">
+${faq.answer}
+
+<!-- Fallback Message -->
+<div class="fallback-message">
+<div class="flex items-center">
+<i class="fas fa-exclamation-triangle"></i>
+<span>Əgər bu cavab kömək etmədisə → ticket açın.</span>
+</div>
+</div>
+</div>
+`;
+
+faqElement.querySelector('.faq-question').addEventListener('click', function() {
+const isActive = faqElement.classList.contains('active');
+
+if (isActive) {
+faqElement.classList.remove('active');
+} else {
+faqElement.classList.add('active');
+}
+});
+
+return faqElement;
+}
+
+// Populate category containers
+function populateCategoryContainers() {
+const technicalContainer = document.getElementById('technical-questions-container');
+faqData.filter(faq => faq.category === 'technical').forEach(faq => {
+technicalContainer.appendChild(createFAQElement(faq));
+});
+
+const gameContainer = document.getElementById('game-questions-container');
+faqData.filter(faq => faq.category === 'game').forEach(faq => {
+gameContainer.appendChild(createFAQElement(faq));
+});
+
+const problemsContainer = document.getElementById('problems-questions-container');
+faqData.filter(faq => faq.category === 'problems').forEach(faq => {
+problemsContainer.appendChild(createFAQElement(faq));
+});
+}
+
+// Show section
+function showSection(section) {
+document.querySelectorAll('.content-section').forEach(content => {
+content.classList.remove('active');
+});
+
+document.getElementById(section + '-section').classList.add('active');
+
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+searchInput.value = '';
+document.querySelectorAll('.faq-item').forEach(faq => {
+faq.style.display = 'block';
+});
+
+const noResults = document.querySelector('.no-results');
+if (noResults) noResults.remove();
+}
+}
+
+// Səs idarəetmə sistemini başlat
+function initializeVolumeControls() {
+const audio = document.getElementById('bgMusic');
+const volumeSlider = document.getElementById('volumeSlider');
+const muteBtn = document.getElementById('muteBtn');
+const volumeIcon = document.getElementById('volumeIcon');
+const volumeTooltip = document.getElementById('volumeTooltip');
+
+if (!audio || !volumeSlider) return;
+
+function updateVolumeTooltip(value) {
+volumeTooltip.textContent = `${value}%`;
+volumeTooltip.style.opacity = '1';
+setTimeout(() => {
+volumeTooltip.style.opacity = '0';
+}, 1000);
+}
+
+document.querySelector('.volume-controls').style.display = 'block';
+
+volumeSlider.addEventListener('input', function() {
+const volumeValue = this.value / 100;
+audio.volume = volumeValue;
+audio.muted = false;
+
+if (volumeValue === 0) {
+volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down');
+volumeIcon.classList.add('fa-volume-mute');
+} else if (volumeValue < 0.5) {
+volumeIcon.classList.remove('fa-volume-up', 'fa-volume-mute');
+volumeIcon.classList.add('fa-volume-down');
+} else {
+volumeIcon.classList.remove('fa-volume-down', 'fa-volume-mute');
+volumeIcon.classList.add('fa-volume-up');
+}
+
+updateVolumeTooltip(this.value);
+localStorage.setItem('bgMusicVolume', this.value);
+localStorage.setItem('bgMusicMuted', 'false');
+});
+
+muteBtn.addEventListener('click', function() {
+if (audio.muted) {
+audio.muted = false;
+volumeIcon.classList.remove('fa-volume-mute');
+
+if (audio.volume === 0) {
+audio.volume = 0.35;
+volumeSlider.value = 35;
+volumeIcon.classList.add('fa-volume-down');
+} else if (audio.volume < 0.5) {
+volumeIcon.classList.add('fa-volume-down');
+} else {
+volumeIcon.classList.add('fa-volume-up');
+}
+
+updateVolumeTooltip(volumeSlider.value);
+} else {
+audio.muted = true;
+volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down');
+volumeIcon.classList.add('fa-volume-mute');
+volumeTooltip.textContent = "Səs söndürüldü";
+volumeTooltip.style.opacity = '1';
+setTimeout(() => {
+volumeTooltip.style.opacity = '0';
+}, 1000);
+}
+
+localStorage.setItem('bgMusicMuted', audio.muted);
+});
+
+volumeSlider.addEventListener('mouseenter', function() {
+volumeTooltip.style.opacity = '1';
+});
+
+volumeSlider.addEventListener('mouseleave', function() {
+setTimeout(() => {
+volumeTooltip.style.opacity = '0';
+}, 500);
+});
+
+const savedVolume = localStorage.getItem('bgMusicVolume');
+if (savedVolume) {
+audio.volume = savedVolume / 100;
+volumeSlider.value = savedVolume;
+}
+
+const savedMuted = localStorage.getItem('bgMusicMuted');
+if (savedMuted === 'true') {
+audio.muted = true;
+volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down');
+volumeIcon.classList.add('fa-volume-mute');
+}
+}
+</script>
+</body>
 </html>
-
-
-
-
-
-
