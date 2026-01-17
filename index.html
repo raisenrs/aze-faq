@@ -16,7 +16,7 @@
 --text-primary: #e0e0e0;
 --text-secondary: #8a8a8a;
 --border-color: #2a2a2f;
---accent-color: #d32f2f;
+--accent-color: #c53030; /* Daha solğun qırmızı */
 --accent-secondary: #2c5282;
 --sidebar-bg: #16161a;
 }
@@ -28,7 +28,7 @@
 --text-primary: #2d3748;
 --text-secondary: #718096;
 --border-color: #e2e8f0;
---accent-color: #c53030;
+--accent-color: #b71c1c; /* Daha solğun qırmızı */
 --accent-secondary: #2b6cb0;
 --sidebar-bg: #f1f5f9;
 }
@@ -44,6 +44,7 @@ color: var(--text-primary);
 min-height: 100vh;
 margin: 0;
 transition: all 0.3s ease;
+opacity: 0.95; /* Ümumi solğunluq */
 }
 
 body.welcome-active {
@@ -51,9 +52,10 @@ overflow: hidden;
 }
 
 .glass-card {
-background: var(--bg-card);
+background: rgba(30, 30, 36, 0.7); /* Daha şəffaf */
 border: 1px solid var(--border-color);
-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Daha yumşaq kölgə */
+backdrop-filter: blur(10px);
 transition: all 0.3s ease;
 }
 
@@ -110,7 +112,7 @@ margin-bottom: 12px;
 border-radius: 8px;
 overflow: hidden;
 transition: all 0.3s ease;
-background: var(--bg-card);
+background: rgba(30, 30, 36, 0.7); /* Daha şəffaf */
 }
 
 .faq-question {
@@ -155,6 +157,7 @@ padding-bottom: 8px;
 border-bottom: 2px solid var(--border-color);
 font-size: 1.25rem;
 font-weight: 600;
+opacity: 0.9;
 }
 
 /* Custom scrollbar */
@@ -167,19 +170,19 @@ background: rgba(0, 0, 0, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-background: rgba(100, 100, 100, 0.5);
+background: rgba(100, 100, 100, 0.4); /* Daha solğun */
 border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-background: rgba(100, 100, 100, 0.7);
+background: rgba(100, 100, 100, 0.5);
 }
 
 /* Question numbers */
 .question-number {
 width: 28px;
 height: 28px;
-background: #bc3b3b;
+background: rgba(188, 59, 59, 0.7); /* Daha şəffaf */
 color: #fff;
 border-radius: 6px;
 display: flex;
@@ -188,17 +191,18 @@ justify-content: center;
 font-size: 12px;
 font-weight: 600;
 flex-shrink: 0;
+opacity: 0.9;
 }
 
 .light-mode .question-number {
-background: #4a5568;
+background: rgba(74, 85, 104, 0.7);
 color: #fff;
 }
 
 /* Code blocks */
 .code-block {
-background: rgba(0, 0, 0, 0.2);
-border-left: 3px solid var(--accent-color);
+background: rgba(0, 0, 0, 0.15); /* Daha şəffaf */
+border-left: 3px solid rgba(211, 47, 47, 0.5); /* Daha solğun */
 padding: 12px;
 border-radius: 6px;
 font-family: 'Courier New', monospace;
@@ -222,7 +226,7 @@ position: fixed;
 top: 20px;
 left: 20px;
 z-index: 100;
-background: var(--accent-color);
+background: rgba(211, 47, 47, 0.8); /* Daha şəffaf */
 color: white;
 width: 40px;
 height: 40px;
@@ -250,6 +254,7 @@ cursor: pointer;
 transition: all 0.3s ease;
 text-decoration: none;
 color: var(--text-primary);
+opacity: 0.9;
 }
 
 .sidebar-item:hover {
@@ -257,9 +262,9 @@ background: rgba(255, 255, 255, 0.05);
 }
 
 .sidebar-item.active {
-background: rgba(211, 47, 47, 0.1);
+background: rgba(211, 47, 47, 0.08); /* Daha şəffaf */
 color: var(--accent-color);
-border-left: 3px solid var(--accent-color);
+border-left: 3px solid rgba(211, 47, 47, 0.5); /* Daha solğun */
 }
 
 .light-mode .sidebar-item:hover {
@@ -267,7 +272,7 @@ background: rgba(0, 0, 0, 0.05);
 }
 
 .light-mode .sidebar-item.active {
-background: rgba(197, 48, 48, 0.1);
+background: rgba(197, 48, 48, 0.08);
 }
 
 /* Content sections */
@@ -286,7 +291,7 @@ opacity: 0;
 transform: translateY(10px);
 }
 to {
-opacity: 1;
+opacity: 0.95;
 transform: translateY(0);
 }
 }
@@ -296,15 +301,17 @@ transform: translateY(0);
 text-align: center;
 padding: 40px 20px;
 color: var(--text-secondary);
+opacity: 0.8;
 }
 
 /* Support message */
 .support-message {
-background: rgba(211, 47, 47, 0.1);
-border: 1px solid rgba(211, 47, 47, 0.2);
+background: rgba(211, 47, 47, 0.08); /* Daha şəffaf */
+border: 1px solid rgba(211, 47, 47, 0.15);
 border-radius: 8px;
 padding: 16px;
 margin-top: 20px;
+opacity: 0.9;
 }
 
 /* Logo container */
@@ -317,6 +324,7 @@ width: 50px;
 height: 50px;
 font-weight: bold;
 color: white;
+opacity: 0.9;
 }
 
 .logo-img {
@@ -340,6 +348,7 @@ inset: 0;
 width: 100%;
 height: 100%;
 object-fit: cover;
+opacity: 0.7; /* Daha şəffaf */
 }
 
 .banner-overlay {
@@ -352,9 +361,9 @@ display: flex;
 align-items: center;
 justify-content: space-between;
 background: linear-gradient(to right,
-rgba(15, 15, 19, 0.9),
-rgba(15, 15, 19, 0.55),
-rgba(15, 15, 19, 0.9));
+rgba(15, 15, 19, 0.85),
+rgba(15, 15, 19, 0.45),
+rgba(15, 15, 19, 0.85));
 }
 
 .banner-content {
@@ -374,9 +383,9 @@ font-size: 1.5rem;
 }
 
 .server-status {
-background: rgba(16, 185, 129, 0.15);
-border: 1px solid rgba(16, 185, 129, 0.35);
-color: #a7f3d0;
+background: rgba(16, 185, 129, 0.12); /* Daha şəffaf */
+border: 1px solid rgba(16, 185, 129, 0.25);
+color: rgba(167, 243, 208, 0.9);
 border-radius: 10px;
 padding: 10px 16px;
 display: flex;
@@ -384,10 +393,11 @@ align-items: center;
 gap: 10px;
 font-size: 14px;
 margin-bottom: 16px;
+opacity: 0.9;
 }
 
 .server-status i {
-color: #22c55e;
+color: rgba(34, 197, 94, 0.9);
 }
 
 /* Welcome overlay */
@@ -427,6 +437,7 @@ position: relative;
 z-index: 2;
 text-align: center;
 padding: 20px;
+opacity: 0.95;
 }
 
 /* Staff sidebar styles */
@@ -439,6 +450,7 @@ margin: 5px 12px;
 background: rgba(255, 255, 255, 0.03);
 transition: all 0.3s ease;
 border-left: 3px solid transparent;
+position: relative;
 }
 
 .staff-member:hover {
@@ -447,19 +459,23 @@ transform: translateX(5px);
 }
 
 .staff-member.owner {
-border-left-color: #ffd700;
+border-left-color: rgba(255, 215, 0, 0.5);
 }
 
 .staff-member.admin {
-border-left-color: #d32f2f;
+border-left-color: rgba(211, 47, 47, 0.5);
 }
 
 .staff-member.manager {
-border-left-color: #1976d2;
+border-left-color: rgba(25, 118, 210, 0.5);
+}
+
+.staff-member.kicik-staff {
+border-left-color: chocolate;
 }
 
 .staff-member.bas-staff {
-border-left-color: #4caf50;
+border-left-color: rgba(76, 175, 80, 0.5);
 }
 
 .staff-avatar-sidebar {
@@ -469,6 +485,22 @@ border-radius: 50%;
 object-fit: cover;
 margin-right: 12px;
 border: 2px solid currentColor;
+position: relative;
+overflow: hidden;
+}
+
+/* Azərbaycan bayrağı banneri */
+.staff-avatar-sidebar::after {
+content: '';
+position: absolute;
+top: -2px;
+right: -2px;
+width: 16px;
+height: 16px;
+background: url('./aze.png') center/cover no-repeat;
+border-radius: 50%;
+border: 1px solid rgba(255, 255, 255, 0.3);
+z-index: 2;
 }
 
 .staff-info {
@@ -479,11 +511,12 @@ flex: 1;
 font-weight: 600;
 font-size: 0.9rem;
 margin-bottom: 2px;
+opacity: 0.9;
 }
 
 .staff-role {
 font-size: 0.75rem;
-color: #d32f2f;
+color: rgba(211, 47, 47, 0.8);
 font-weight: 500;
 }
 
@@ -509,7 +542,7 @@ background: rgba(255, 255, 255, 0.05);
 
 .sidebar-collapsible-header i {
 transition: transform 0.3s ease;
-color: #8a8a8a;
+color: rgba(138, 138, 138, 0.7);
 font-size: 0.8rem;
 }
 
@@ -535,7 +568,7 @@ position: fixed;
 bottom: 20px;
 right: 20px;
 z-index: 100;
-opacity: 0.8;
+opacity: 0.7;
 transition: opacity 0.3s ease;
 }
 
@@ -549,6 +582,8 @@ align-items: center;
 gap: 10px;
 padding: 10px 15px;
 border-radius: 10px;
+background: rgba(30, 30, 36, 0.7);
+border: 1px solid var(--border-color);
 }
 
 #volumeSlider {
@@ -565,7 +600,7 @@ outline: none;
 width: 15px;
 height: 15px;
 border-radius: 50%;
-background: #d32f2f;
+background: rgba(211, 47, 47, 0.7);
 cursor: pointer;
 }
 
@@ -574,7 +609,7 @@ position: absolute;
 top: -25px;
 left: 50%;
 transform: translateX(-50%);
-background: rgba(0, 0, 0, 0.8);
+background: rgba(0, 0, 0, 0.7);
 color: white;
 padding: 3px 8px;
 border-radius: 4px;
@@ -592,7 +627,7 @@ left: 0;
 right: 0;
 bottom: 0;
 z-index: 9998;
-background: #000;
+background: rgba(0, 0, 0, 0.95);
 display: flex;
 align-items: center;
 justify-content: center;
@@ -607,21 +642,22 @@ pointer-events: all;
 }
 
 .music-selection-container {
-background: #121212;
+background: rgba(18, 18, 18, 0.9);
 border-radius: 12px;
 padding: 20px;
 max-width: 500px;
 width: 95%;
 max-height: 90vh;
 overflow-y: auto;
-border: 1px solid #282828;
+border: 1px solid rgba(40, 40, 40, 0.5);
+backdrop-filter: blur(10px);
 }
 
 .music-selection-title {
 text-align: center;
 margin-bottom: 20px;
 padding-bottom: 15px;
-border-bottom: 1px solid #282828;
+border-bottom: 1px solid rgba(40, 40, 40, 0.5);
 }
 
 .music-selection-title h2 {
@@ -629,10 +665,11 @@ font-size: 1.5rem;
 font-weight: 700;
 color: white;
 margin-bottom: 5px;
+opacity: 0.9;
 }
 
 .music-selection-title p {
-color: #b3b3b3;
+color: rgba(179, 179, 179, 0.8);
 font-size: 0.9rem;
 }
 
@@ -644,7 +681,7 @@ margin-bottom: 20px;
 }
 
 .music-track-card {
-background: #181818;
+background: rgba(24, 24, 24, 0.7);
 border-radius: 8px;
 padding: 12px;
 cursor: pointer;
@@ -656,12 +693,12 @@ gap: 12px;
 }
 
 .music-track-card:hover {
-background: #282828;
+background: rgba(40, 40, 40, 0.7);
 }
 
 .music-track-card.active {
 background: rgba(211, 47, 47, 0.1);
-border-color: #d32f2f;
+border-color: rgba(211, 47, 47, 0.3);
 }
 
 .track-cover {
@@ -676,6 +713,7 @@ flex-shrink: 0;
 width: 100%;
 height: 100%;
 object-fit: cover;
+opacity: 0.9;
 }
 
 .track-info {
@@ -687,15 +725,16 @@ font-size: 0.95rem;
 font-weight: 600;
 margin-bottom: 4px;
 color: white;
+opacity: 0.9;
 }
 
 .track-info p {
-color: #b3b3b3;
+color: rgba(179, 179, 179, 0.7);
 font-size: 0.8rem;
 }
 
 .track-icon {
-color: #1db954;
+color: rgba(29, 185, 84, 0.8);
 font-size: 1.2rem;
 }
 
@@ -703,7 +742,7 @@ font-size: 1.2rem;
 display: block;
 margin: 0 auto;
 padding: 12px 30px;
-background: #181818;
+background: rgba(24, 24, 24, 0.8);
 color: white;
 border: none;
 border-radius: 50px;
@@ -714,7 +753,7 @@ transition: all 0.3s ease;
 }
 
 .select-music-btn:hover {
-background: #b71c1c;
+background: rgba(183, 28, 28, 0.8);
 transform: scale(1.05);
 }
 
@@ -725,7 +764,7 @@ max-width: 800px;
 margin: 20px auto;
 border-radius: 12px;
 overflow: hidden;
-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .video-container video {
@@ -743,24 +782,24 @@ margin-top: 20px;
 }
 
 .shortcut-category {
-background: rgba(40, 40, 48, 0.7);
+background: rgba(40, 40, 48, 0.5);
 border-radius: 10px;
 padding: 20px;
-border-left: 4px solid #d32f2f;
+border-left: 4px solid rgba(211, 47, 47, 0.5);
 }
 
 .shortcut-category h3 {
 font-size: 1.1rem;
 font-weight: 600;
 margin-bottom: 15px;
-color: #fff;
+color: rgba(255, 255, 255, 0.9);
 display: flex;
 align-items: center;
 gap: 10px;
 }
 
 .shortcut-category h3 i {
-color: #d32f2f;
+color: rgba(211, 47, 47, 0.7);
 }
 
 .shortcut-item {
@@ -781,8 +820,8 @@ gap: 5px;
 }
 
 .key {
-background: rgba(0, 0, 0, 0.3);
-border: 1px solid rgba(255, 255, 255, 0.1);
+background: rgba(0, 0, 0, 0.2);
+border: 1px solid rgba(255, 255, 255, 0.08);
 border-radius: 4px;
 padding: 4px 8px;
 font-family: 'Courier New', monospace;
@@ -792,14 +831,14 @@ text-align: center;
 }
 
 .key.combo {
-background: rgba(211, 47, 47, 0.2);
-border-color: rgba(211, 47, 47, 0.4);
+background: rgba(211, 47, 47, 0.15);
+border-color: rgba(211, 47, 47, 0.3);
 }
 
 /* Fallback message */
 .fallback-message {
-background: rgba(245, 158, 11, 0.1);
-border: 1px solid rgba(245, 158, 11, 0.35);
+background: rgba(245, 158, 11, 0.08);
+border: 1px solid rgba(245, 158, 11, 0.25);
 border-radius: 8px;
 padding: 12px 16px;
 margin-top: 15px;
@@ -808,8 +847,186 @@ font-size: 14px;
 }
 
 .fallback-message i {
-color: #f59e0b;
+color: rgba(245, 158, 11, 0.8);
 margin-right: 8px;
+}
+
+/* PROBLEM WIZARD STYLES */
+.problem-wizard {
+background: rgba(30, 30, 36, 0.7);
+border-radius: 12px;
+padding: 25px;
+margin-bottom: 30px;
+border: 1px solid var(--border-color);
+}
+
+.wizard-step {
+display: none;
+animation: fadeIn 0.3s ease;
+}
+
+.wizard-step.active {
+display: block;
+}
+
+.wizard-title {
+font-size: 1.5rem;
+font-weight: 700;
+margin-bottom: 20px;
+color: rgba(255, 255, 255, 0.9);
+text-align: center;
+}
+
+.problem-options {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 15px;
+margin: 25px 0;
+}
+
+.problem-option {
+background: rgba(40, 40, 48, 0.5);
+border: 2px solid transparent;
+border-radius: 10px;
+padding: 20px;
+cursor: pointer;
+transition: all 0.3s ease;
+text-align: center;
+}
+
+.problem-option:hover {
+background: rgba(40, 40, 48, 0.7);
+transform: translateY(-3px);
+border-color: rgba(211, 47, 47, 0.3);
+}
+
+.problem-option.selected {
+background: rgba(211, 47, 47, 0.1);
+border-color: rgba(211, 47, 47, 0.5);
+}
+
+.problem-option i {
+font-size: 2rem;
+color: rgba(211, 47, 47, 0.7);
+margin-bottom: 10px;
+}
+
+.problem-option h3 {
+font-size: 1rem;
+font-weight: 600;
+margin-bottom: 5px;
+color: rgba(255, 255, 255, 0.9);
+}
+
+.problem-option p {
+font-size: 0.85rem;
+color: rgba(255, 255, 255, 0.6);
+}
+
+.wizard-navigation {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 30px;
+padding-top: 20px;
+border-top: 1px solid var(--border-color);
+}
+
+.wizard-btn {
+padding: 10px 25px;
+background: rgba(211, 47, 47, 0.8);
+color: white;
+border: none;
+border-radius: 8px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+opacity: 0.9;
+}
+
+.wizard-btn:hover {
+background: rgba(183, 28, 28, 0.9);
+transform: translateY(-2px);
+}
+
+.wizard-btn:disabled {
+background: rgba(100, 100, 100, 0.3);
+cursor: not-allowed;
+transform: none;
+}
+
+.wizard-progress {
+display: flex;
+justify-content: center;
+gap: 10px;
+margin: 20px 0;
+}
+
+.progress-step {
+width: 12px;
+height: 12px;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.1);
+transition: all 0.3s ease;
+}
+
+.progress-step.active {
+background: rgba(211, 47, 47, 0.7);
+}
+
+.solution-card {
+background: rgba(30, 30, 36, 0.7);
+border-radius: 12px;
+padding: 25px;
+margin-top: 20px;
+border-left: 4px solid rgba(211, 47, 47, 0.5);
+animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+.solution-card h3 {
+font-size: 1.3rem;
+font-weight: 700;
+margin-bottom: 15px;
+color: rgba(255, 255, 255, 0.9);
+}
+
+.solution-steps {
+list-style-type: decimal;
+padding-left: 20px;
+margin: 15px 0;
+}
+
+.solution-steps li {
+margin-bottom: 10px;
+color: rgba(255, 255, 255, 0.8);
+}
+
+.try-another-btn {
+display: block;
+margin: 20px auto 0;
+padding: 10px 30px;
+background: rgba(40, 40, 48, 0.7);
+color: white;
+border: 1px solid var(--border-color);
+border-radius: 8px;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.try-another-btn:hover {
+background: rgba(211, 47, 47, 0.1);
+border-color: rgba(211, 47, 47, 0.3);
 }
 </style>
 </head>
@@ -962,7 +1179,7 @@ Daxil ol
 <a href="#" class="sidebar-item" data-section="problems">
 <i class="fas fa-question-circle mr-3"></i>
 <span>Problem Həll</span>
-<span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">3</span>
+<span class="ml-auto text-xs bg-gray-700 px-2 py-1 rounded">4</span>
 </a>
 <a href="#" class="sidebar-item" data-section="controls">
 <i class="fas fa-keyboard mr-3"></i>
@@ -1032,6 +1249,95 @@ Daxil ol
 <div class="theme-toggle cursor-pointer p-2 rounded-lg bg-gray-900 bg-opacity-60 hover:bg-gray-700 transition-colors" id="themeToggle">
 <i class="fas fa-moon text-yellow-300"></i>
 </div>
+</div>
+</div>
+
+<!-- PROBLEM WIZARD SECTION -->
+<div class="content-section" id="problems-section">
+<div class="problem-wizard">
+<div class="wizard-step active" id="step1">
+<h2 class="wizard-title">🧪 Problemini Seç</h2>
+<p class="text-center text-gray-400 mb-6">Aşağıdakı problemlərdən birini seçin və addım-addım həll yollarını əldə edin</p>
+
+<div class="wizard-progress">
+<div class="progress-step active"></div>
+<div class="progress-step"></div>
+<div class="progress-step"></div>
+</div>
+
+<div class="problem-options">
+<div class="problem-option" data-problem="crash">
+<i class="fas fa-exclamation-triangle"></i>
+<h3>FiveM açılmır</h3>
+<p>FiveM proqramı başlamır və ya qəfildən bağlanır</p>
+</div>
+
+<div class="problem-option" data-problem="fps">
+<i class="fas fa-tachometer-alt"></i>
+<h3>FPS düşür</h3>
+<p>Oyun zamanı performans problemləri yaşanır</p>
+</div>
+
+<div class="problem-option" data-problem="server">
+<i class="fas fa-server"></i>
+<h3>Serverə girmir</h3>
+<p>Serverə bağlanma zamanı xəta alırsınız</p>
+</div>
+
+<div class="problem-option" data-problem="connection">
+<i class="fas fa-plug"></i>
+<h3>Crash verir</h3>
+<p>Oyun zamanı müntəzəm crash problemləri</p>
+</div>
+</div>
+
+<div class="wizard-navigation">
+<button class="wizard-btn" style="visibility: hidden;" id="prevBtn">Geri</button>
+<button class="wizard-btn" id="nextBtn1" disabled>Növbəti</button>
+</div>
+</div>
+
+<div class="wizard-step" id="step2">
+<h2 class="wizard-title">🔍 Problem Təsviri</h2>
+<p class="text-center text-gray-400 mb-6" id="problemDescription"></p>
+
+<div class="wizard-progress">
+<div class="progress-step"></div>
+<div class="progress-step active"></div>
+<div class="progress-step"></div>
+</div>
+
+<div id="problemDetails"></div>
+
+<div class="wizard-navigation">
+<button class="wizard-btn" id="prevBtn2">Geri</button>
+<button class="wizard-btn" id="nextBtn2">Həll Yollarını Göstər</button>
+</div>
+</div>
+
+<div class="wizard-step" id="step3">
+<h2 class="wizard-title">✅ Həll Yolları</h2>
+
+<div class="wizard-progress">
+<div class="progress-step"></div>
+<div class="progress-step"></div>
+<div class="progress-step active"></div>
+</div>
+
+<div id="solutionContent">
+<!-- Solutions will be loaded here -->
+</div>
+
+<div class="wizard-navigation">
+<button class="wizard-btn" id="prevBtn3">Geri</button>
+<button class="wizard-btn" id="finishBtn">Yeni Problem</button>
+</div>
+</div>
+</div>
+
+<!-- Existing Problems Content -->
+<div id="problems-questions-container">
+<!-- Existing problem questions will be loaded here -->
 </div>
 </div>
 
@@ -1184,13 +1490,6 @@ VIP Üstünlükləri
 </div>
 </div>
 </div>
-</div>
-</div>
-
-<div class="content-section" id="problems-section">
-<h2 class="text-xl font-bold mb-6">Problem Həll Etmə</h2>
-<div id="problems-questions-container">
-<!-- Problem solving questions will be loaded here -->
 </div>
 </div>
 
@@ -1451,7 +1750,11 @@ const staffData = [
 { name: "Zyn", role: "Admin", image: "./zyn.png", type: "admin" },
 { name: "Farid", role: "Bas Staff", image: "./farid.png", type: "bas-staff" },
 { name: "Abbas", role: "Bas Staff", image: "./abbas.png", type: "bas-staff" },
-{ name: "Zyv", role: "Bas Staff", image: "./zyv.png", type: "bas-staff" }
+{ name: "Zyv", role: "Bas Staff", image: "./zyv.png", type: "bas-staff" },
+{ name: "Kolentana", role: "Kicik Staff", image: "./kolentana.png", type: "kicik-staff" },
+{ name: "Captain", role: "Kicik Staff", image: "./captain.png", type: "kicik-staff" },
+{ name: "Ner1sov", role: "Kicik Staff", image: "./nerisov.png", type: "kicik-staff" },
+{ name: "N1ko", role: "Kicik Staff", image: "./niko.png", type: "kicik-staff" }
 ];
 
 // Musiqi seçimləri
@@ -1492,6 +1795,102 @@ cover: "./main4.png",
 file: "./main4.mp4"
 }
 ];
+
+// Problem Wizard Data
+const problemData = {
+crash: {
+title: "FiveM Açılmır",
+description: "FiveM proqramı başlamır, qəfildən bağlanır və ya açılarkən xəta verir",
+details: `
+<div class="bg-gray-800 p-4 rounded-lg mb-4">
+<h4 class="font-bold mb-2">Mümkün səbəblər:</h4>
+<ul class="list-disc pl-5 space-y-1">
+<li>FiveM cache problemi</li>
+<li>Antivirus/Firewall bloklaması</li>
+<li>GTA V fayllarının zədələnməsi</li>
+<li>Windows yeniləməsi lazımdır</li>
+<li>Qrafik driverləri köhnədir</li>
+</ul>
+</div>
+`,
+solutions: [
+"FiveM cache-ni təmizləyin (M → Player Options → Clear Cache)",
+"Antivirus proqramınızdan FiveM və GTA V fayllarını istisna edin",
+"GTA V fayllarını Steam/Rockstar Launcher-də verify edin",
+"Windows və qrafik driverlərini ən son versiyaya yeniləyin",
+"FiveM proqramını administrator kimi işə salın"
+]
+},
+fps: {
+title: "FPS Düşür",
+description: "Oyun zamanı performans problemləri, lag və ya tökmə yaşanır",
+details: `
+<div class="bg-gray-800 p-4 rounded-lg mb-4">
+<h4 class="font-bold mb-2">Mümkün səbəblər:</h4>
+<ul class="list-disc pl-5 space-y-1">
+<li>Serverdə çoxlu obyekt/player var</li>
+<li>Komputeriniz minimum sistem tələblərini ödəmir</li>
+<li>Arxa planda çoxlu proqramlar işləyir</li>
+<li>Qrafik ayarları çox yüksəkdir</li>
+<li>İnternet bağlantısında problem var</li>
+</ul>
+</div>
+`,
+solutions: [
+"Oyun içi qrafik ayarlarını azaldın (ESC → Settings → Graphics)",
+"Arxa planda işləyən proqramları bağlayın (Discord, Chrome və s.)",
+"FiveM cache-ni təmizləyin",
+"NVIDIA/AMD driver ayarlarını optimallaşdırın",
+"Serverdə daha az məşğul vaxt seçin"
+]
+},
+server: {
+title: "Serverə Girmir",
+description: "Serverə bağlanma zamanı xəta alırsınız və ya connection failed mesajı görürsünüz",
+details: `
+<div class="bg-gray-800 p-4 rounded-lg mb-4">
+<h4 class="font-bold mb-2">Mümkün səbəblər:</h4>
+<ul class="list-disc pl-5 space-y-1">
+<li>İnternet bağlantı problemi</li>
+<li>Firewall/antivirus bloklaması</li>
+<li>Server tam doludur</li>
+<li>FiveM versiyası köhnədir</li>
+<li>Server məşğuldur və ya offline-dır</li>
+</ul>
+</div>
+`,
+solutions: [
+"İnternet bağlantınızı yoxlayın və router-ı yenidən başladın",
+"Firewall/antivirus-dan FiveM və GTA V üçün icazə verin",
+"FiveM proqramını yenidən başladın və yeniləmələri yoxlayın",
+"Serverin statusunu Discord-da yoxlayın",
+"Başqa bir serverə bağlanmağı sınayın"
+]
+},
+connection: {
+title: "Crash Verir",
+description: "Oyun zamanı müntəzəm crash problemləri və qəfil bağlanmalar yaşanır",
+details: `
+<div class="bg-gray-800 p-4 rounded-lg mb-4">
+<h4 class="font-bold mb-2">Mümkün səbəblər:</h4>
+<ul class="list-disc pl-5 space-y-1">
+<li>Mod/script uyğunsuzluğu</li>
+<li>FiveM cache problemi</li>
+<li>GTA V faylları zədələnib</li>
+<li>Sistem yaddaşı (RAM) çatışmır</li>
+<li>Overclock edilmiş komponentlər</li>
+</ul>
+</div>
+`,
+solutions: [
+"Bütün mod/script-ləri disable edin və tək-tək aktiv edin",
+"FiveM cache və data qovluqlarını təmizləyin",
+"GTA V fayllarını Steam/Rockstar-də verify edin",
+"Virtual yaddaşı (page file) artırın",
+"Overclock ayarlarını sıfırlayın və ya komponentləri default tezliyə qaytarın"
+]
+}
+};
 
 // FAQ Data - Tüm sorular
 const faqData = [
@@ -2095,7 +2494,8 @@ initializeAudioPreviews();
 }
 // Staff sidebar'ı başlat
 initializeStaffSidebar();
-initializeFAQSystem(); // ✅ FAQ SISTEMI BURADA BAŞLAMALIDIR
+initializeFAQSystem();
+initializeProblemWizard(); // PROBLEM WIZARD BAŞLAT
 });
 
 // Staff sidebar'ını başlat
@@ -2128,6 +2528,96 @@ staffCollapsibleHeader.onclick = () => {
 staffCollapsible.classList.toggle('active');
 };
 
+}
+
+// PROBLEM WIZARD İNİTİALİZATİON
+function initializeProblemWizard() {
+const problemOptions = document.querySelectorAll('.problem-option');
+const nextBtn1 = document.getElementById('nextBtn1');
+const nextBtn2 = document.getElementById('nextBtn2');
+const prevBtn2 = document.getElementById('prevBtn2');
+const prevBtn3 = document.getElementById('prevBtn3');
+const finishBtn = document.getElementById('finishBtn');
+
+let selectedProblem = null;
+
+// Step 1: Problem seçimi
+problemOptions.forEach(option => {
+option.addEventListener('click', function() {
+problemOptions.forEach(opt => opt.classList.remove('selected'));
+this.classList.add('selected');
+selectedProblem = this.getAttribute('data-problem');
+nextBtn1.disabled = false;
+});
+});
+
+// Next button 1 (Step 1 → Step 2)
+nextBtn1.addEventListener('click', function() {
+if (!selectedProblem) return;
+
+const problem = problemData[selectedProblem];
+document.getElementById('problemDescription').textContent = problem.description;
+document.getElementById('problemDetails').innerHTML = problem.details;
+
+document.getElementById('step1').classList.remove('active');
+document.getElementById('step2').classList.add('active');
+});
+
+// Prev button 2 (Step 2 → Step 1)
+prevBtn2.addEventListener('click', function() {
+document.getElementById('step2').classList.remove('active');
+document.getElementById('step1').classList.add('active');
+});
+
+// Next button 2 (Step 2 → Step 3)
+nextBtn2.addEventListener('click', function() {
+if (!selectedProblem) return;
+
+const problem = problemData[selectedProblem];
+let solutionsHTML = `
+<div class="solution-card">
+<h3>${problem.title} üçün həll yolları</h3>
+<ol class="solution-steps">
+`;
+
+problem.solutions.forEach((solution, index) => {
+solutionsHTML += `<li>${solution}</li>`;
+});
+
+solutionsHTML += `
+</ol>
+<div class="mt-6 p-4 bg-green-900 bg-opacity-20 rounded-lg">
+<p class="text-green-300 font-medium">
+✅ Bu addımları tətbiq etdikdən sonra FiveM-i yenidən başladın və problemin həll olub-olmadığını yoxlayın.
+</p>
+</div>
+<p class="text-gray-400 text-sm mt-4">
+Əgər problem davam edirsə, Discord serverimizdə ticket açaraq kömək ala bilərsiniz.
+</p>
+</div>
+`;
+
+document.getElementById('solutionContent').innerHTML = solutionsHTML;
+document.getElementById('step2').classList.remove('active');
+document.getElementById('step3').classList.add('active');
+});
+
+// Prev button 3 (Step 3 → Step 2)
+prevBtn3.addEventListener('click', function() {
+document.getElementById('step3').classList.remove('active');
+document.getElementById('step2').classList.add('active');
+});
+
+// Finish button (Yeni problem)
+finishBtn.addEventListener('click', function() {
+// Reset wizard
+problemOptions.forEach(opt => opt.classList.remove('selected'));
+selectedProblem = null;
+nextBtn1.disabled = true;
+
+document.getElementById('step3').classList.remove('active');
+document.getElementById('step1').classList.add('active');
+});
 }
 
 // Preview audio-larını başlat
