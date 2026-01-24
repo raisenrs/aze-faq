@@ -1814,7 +1814,7 @@ details: `
 </div>
 `,
 solutions: [
-"FiveM cache-ni təmizləyin (M → Player Options → Clear Cache)",
+"FiveM cache-ni təmizləyin",
 "Antivirus proqramınızdan FiveM və GTA V fayllarını istisna edin",
 "GTA V fayllarını Steam/Rockstar Launcher-də verify edin",
 "Windows və qrafik driverlərini ən son versiyaya yeniləyin",
@@ -1883,7 +1883,7 @@ details: `
 </div>
 `,
 solutions: [
-"Bütün mod/script-ləri disable edin və tək-tək aktiv edin",
+"Zəhmət olmasa serverdən çıxıb yenidən daxil olun.",
 "FiveM cache və data qovluqlarını təmizləyin",
 "GTA V fayllarını Steam/Rockstar-də verify edin",
 "Virtual yaddaşı (page file) artırın",
@@ -2473,6 +2473,190 @@ Ayarları etdikdən sonra oyunu restart edin və səsin işlədiyini test edin.
 `,
 similarQuestions: [2, 5, 6]
 },
+{
+id: 16,
+number: "16",
+category: "game",
+question: "Maşında Mahnı Necə Qoşa Bilərəm?",
+description: "Avtomobildə musiqi qoşmaq və səsi tənzimləmək",
+answer: `
+<div class="space-y-4">
+
+<p>Oyunda maşında mahnı qoşmaq üçün aşağıdakı addımları izləyin:</p>
+
+<div class="code-block">
+<p>1. Çata <code>/pmms</code> yazın</p>
+<p>2. Açılan pəncərədə solda sürücünü seçin</p>
+<p>3. Sonra <strong>Enter URL</strong> hissəsinə mahnının linkini yapışdırın</p>
+<p>4. Ən sağdakı <strong>Play</strong> düyməsinə basın</p>
+</div>
+
+<p><strong>Səs tənzimləmək üçün:</strong></p>
+<div class="code-block">
+<p>Səsi azaltmaq və artırmaq üçün aşağıdakı bardan istifadə edin</p>
+</div>
+
+<p><strong>Nümunə şəkil:</strong></p>
+<div class="grid grid-cols-1 gap-4">
+<img src="/radyo.png" alt="Radio Player" class="rounded-lg border"/>
+</div>
+
+<div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-green-300 font-medium">
+Mahnı başladıqdan sonra avtomobil daxilində musiqini rahatlıqla dinləyə bilərsiniz.
+</p>
+</div>
+
+</div>
+`,
+similarQuestions: [5, 7, 15]
+},
+  {
+id: 17,
+number: "17",
+category: "game",
+question: "HUD-u Necə Gizlədə və Açıq Edə Bilərəm?",
+description: "HUD-u bağlamaq və yenidən aktiv etmək",
+answer: `
+<div class="space-y-4">
+
+<p>Bu HUD-u bağlamaq və yenidən açmaq üçün aşağıdakı komandaları istifadə edin:</p>
+
+<div class="code-block">
+<p>HUD-u bağlamaq üçün: <code>/hud hide</code></p>
+<p>HUD-u açmaq üçün: <code>/hud show</code></p>
+</div>
+
+<p><strong>Nümunə şəkil:</strong></p>
+<div class="grid grid-cols-1 gap-4">
+<img src="/hud.png" alt="HUD Example" class="rounded-lg border"/>
+</div>
+
+<div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-green-300 font-medium">
+HUD ayarlarını istədiyiniz zaman bu komandalarla idarə edə bilərsiniz.
+</p>
+</div>
+
+</div>
+`,
+similarQuestions: [15, 16]
+},
+  {
+id: 18,
+number: "18",
+category: "technical",
+question: "FiveM-də Yüklənmə Progressini Necə Görə Bilərəm?",
+description: "Oyun içi yüklənmələri görmək üçün ayar",
+answer: `
+<div class="space-y-4">
+
+<p>Oyun içi yüklənmələri görmək üçün FiveM settings bölməsində göstərilən ayarı aktiv edin:</p>
+
+<div class="code-block">
+<p>1. FiveM → Settings → Game bölməsinə daxil olun</p>
+<p>2. Qırmızı ilə göstərilən <strong>Display progress when downloading in-game streamed assets</strong> seçimini aktiv edin</p>
+</div>
+
+<p><strong>Nümunə şəkil:</strong></p>
+<div class="grid grid-cols-1 gap-4">
+<img src="/fivem.png" alt="FiveM Settings" class="rounded-lg border"/>
+</div>
+
+<div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-green-300 font-medium">
+Bu ayar aktiv olduqdan sonra serverə girərkən yüklənən faylları görə biləcəksiniz.
+</p>
+</div>
+
+</div>
+`,
+similarQuestions: [2, 15, 17]
+},
+  {
+id: 19,
+number: "19",
+category: "game",
+question: "Maşına Minəndə Radio Avtomatik Açılmasın Deyə Necə Söndürə Bilərəm?",
+description: "Avtomatik radio açılmasını deaktiv etmək",
+answer: `
+<div class="space-y-4">
+
+<p>Oyunda hər dəfə maşına minəndə avtomatik radio açılmasın deyə aşağıdakı addımları edin:</p>
+
+<div class="code-block">
+<p>1. ESC düyməsinə basın</p>
+<p>2. Vehicle Options bölməsinə daxil olun</p>
+<p>3. <strong>Default Radio Station</strong> hissəsini <strong>RadioOff</strong> edin</p>
+<p>4. Sonra Misc Settings bölməsinə keçin</p>
+<p>5. Ən altda olan <strong>Save Personal Settings</strong> düyməsinə basın</p>
+</div>
+
+<p><strong>Nümunə şəkillər:</strong></p>
+<div class="grid grid-cols-2 gap-4">
+<img src="/oyun.png" alt="Vehicle Options Radio Off" class="rounded-lg border"/>
+<img src="/oyun1.png" alt="Save Personal Settings" class="rounded-lg border"/>
+</div>
+
+<div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-green-300 font-medium">
+Bu ayarları etdikdən sonra hər dəfə maşın spawn olduqda radio artıq avtomatik açılmayacaq.
+</p>
+</div>
+
+</div>
+`,
+similarQuestions: [16, 17, 18]
+},
+{
+id: 20,
+number: "20",
+category: "game",
+question: "Loqonu Gizlətmək, Helikopteri Sabitləmək və Digər Faydalı Komandalar",
+description: "Logo gizlətmə, hover, dalni və FOV ayarları",
+answer: `
+<div class="space-y-4">
+
+<p>Oyunda istifadə edə biləcəyiniz bəzi faydalı komandalar və qısa yollar:</p>
+
+<div class="code-block">
+<p><strong>Loqonu gizlətmək üçün:</strong> <code>/wm hide</code></p>
+<p><strong>Loqonu geri qaytarmaq üçün:</strong> <code>/wm show</code></p>
+</div>
+
+<div class="code-block">
+<p><strong>Helikopteri sabitləmək üçün:</strong> <code>/hover</code></p>
+</div>
+
+<div class="code-block">
+<p><strong>Dalni vermək üçün:</strong> <code>E</code> düyməsinə basın</p>
+</div>
+
+<div class="code-block">
+<p><strong>Avtomobil içi görüntünü artırıb / azaltmaq (FOV ayarı):</strong></p>
+<p>FOV ayarını dəyişmək üçün aşağıdakı videodan istifadə edə bilərsiniz</p>
+</div>
+
+<ul class="list-disc list-inside text-blue-400">
+<li><a href="https://youtu.be/3bfx6zJgIvM?si=frFD2eEsyQ4_Arb-" target="_blank">FOV Ayarı – YouTube</a></li>
+</ul>
+
+<p><strong>Nümunə logo:</strong></p>
+<div class="grid grid-cols-1 gap-4">
+<img src="/bizon.png" alt="Server Logo" class="rounded-lg border"/>
+</div>
+
+<div class="bg-green-900 bg-opacity-20 p-4 rounded-lg">
+<p class="text-green-300 font-medium">
+Bu komandalar oyun içində rahatlıq və daha yaxşı idarəetmə üçün istifadə olunur.
+</p>
+</div>
+
+</div>
+`,
+similarQuestions: [16, 17, 18, 19]
+},
+
 ];
 
 // Sayfa yükləndikdə işləyəcək funksiyalar
@@ -3069,6 +3253,7 @@ volumeIcon.classList.add('fa-volume-mute');
 </script>
 </body>
 </html>
+
 
 
 
